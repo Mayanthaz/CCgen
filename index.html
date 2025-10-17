@@ -352,54 +352,47 @@
           Advertisement
         </div>
 
-        <!-- ad script (explicit https) -->
+        <!-- provided ad code (protocol-relative src as requested) -->
         <script type="text/javascript">
-          atOptions = {
-            'key' : '0879b0752ee352d3d0380b44140d09f1',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-          };
-          (function insertAd(){
-            try {
-              var s = document.createElement('script');
-              s.type = 'text/javascript';
-              s.async = true;
-              s.src = 'https://www.highperformanceformat.com/0879b0752ee352d3d0380b44140d09f1/invoke.js';
-              var parent = document.currentScript.parentNode;
-              parent.appendChild(s);
-            } catch(e){
-              /* fail silently - debug fallback remains visible */
-            }
-          })();
+            atOptions = {
+                'key' : '0879b0752ee352d3d0380b44140d09f1',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+            };
         </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/0879b0752ee352d3d0380b44140d09f1/invoke.js"></script>
 
         <!-- noscript fallback -->
         <noscript>
           <a href="#" title="Ad placeholder" style="display:inline-block;width:468px;height:60px;background:#0b1220;color:#9fbfcf;border-radius:6px;line-height:60px;text-align:center;border:1px solid rgba(255,255,255,0.02);">Advertisement</a>
         </noscript>
 
-        <!-- hidden iframe fallback that will be removed if real ad loads -->
+        <!-- debug iframe fallback that will be shown if the remote script is blocked -->
         <iframe id="ad-fallback" srcdoc="<div style='width:468px;height:60px;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;'>Ad placeholder</div>" style="border:0;width:468px;height:60px;display:none;" aria-hidden="true"></iframe>
 
-        <!-- runtime check: hide debug placeholder if ad iframe is injected -->
+        <!-- runtime check: hide debug placeholder if provider iframe appears -->
         <script type="text/javascript">
           (function(){
             var wrap = document.currentScript.parentNode;
             var debug = document.getElementById('ad-debug');
             function check() {
-              // if an iframe from remote provider appears, hide fallback
               var iframes = wrap.getElementsByTagName('iframe');
               for(var i=0;i<iframes.length;i++){
                 if(iframes[i].src && iframes[i].src.indexOf('highperformanceformat') !== -1){
                   debug.style.display = 'none';
+                  // show provider iframe if hidden
+                  iframes[i].style.display = '';
                   return;
                 }
               }
-              // try again a few times (script may load async)
               attempts--;
               if(attempts>0) setTimeout(check, 600);
+              else {
+                // script likely blocked — show fallback visibly
+                document.getElementById('ad-fallback').style.display = '';
+              }
             }
             var attempts = 6;
             setTimeout(check, 400);
@@ -466,8 +459,9 @@
       <!-- ADVANCED FORM -->
       <form class="panel-form" id="form-advanced" style="display:none" autocomplete="off">
         <div class="field">
-          <label for="bin">BIN <span style="font-weight:400;font-size:0.98em">(optional, e.g. 453590)</span></label>
-          <input type="text" id="bin" maxlength="10" pattern="^[0-9]{6,10}$" placeholder="e.g: 453590">
+          <label for="bin">BIN <span style="font-weight:400;font-size:0.98em">(optional — 6 to 16 digits)</span></label>
+          <!-- allow up to 16 digits -->
+          <input type="text" id="bin" maxlength="16" pattern="^[0-9]{6,16}$" placeholder="e.g: 515462001648xxxx">
         </div>
         <div class="field">
           <label for="format-adv">Format</label>
@@ -606,13 +600,11 @@
   }
   function cardLength(type) { if(type==='amex') return 15; return 16; }
   function randomCvv(type){ if(type==='amex') return (Math.floor(1000+Math.random()*9000)).toString(); return (Math.floor(100+Math.random()*900)).toString(); }
+  // keep the selected value as-is; generation logic below handles 'random'
   function getAnyValue(selected, alt, length) {
-    if(selected==='random') {
-      if(length) return (Math.floor(Math.random()*length)+1).toString().padStart(2,'0');
-      return (Math.floor(100+Math.random()*900));
-    }
     return selected;
   }
+
   function formatLine(card, month, year, cvv, fmt) {
     if(fmt==='csv') return `${card},${month},${year},${cvv}`;
     if(fmt==='space') return `${card} ${month} ${year} ${cvv}`;
@@ -631,7 +623,7 @@
     return null;
   }
   function validateAdv({bin,quantity,exp_month,exp_year,cvv_on,cvv_value}) {
-    if(bin && !/^\d{6,10}$/.test(bin)) return "BIN must be 6-10 digits.";
+    if(bin && !/^\d{6,16}$/.test(bin)) return "BIN must be 6-16 digits.";
     if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>30) return "Quantity 1-30 required.";
     if(exp_month!=='random') { let m=+exp_month;if(m<1||m>12) return "Month 1-12."; }
     if(exp_year!=='random') {
@@ -688,10 +680,11 @@
     }
     let output = [];
     for(let i=0; i<+quantity; i++) {
-      let network = bin?getTypeByBin(bin):'mc';
-      let pre = bin ? bin : getCardPrefix('random');
-      let len = bin? (bin.startsWith('3')?15:16) : cardLength('mc');
-      let card = luhnGen(pre, len);
+      let network = bin ? getTypeByBin(bin) : 'mc';
+      let len = bin ? (bin.startsWith('3') ? 15 : 16) : cardLength(network);
+      // build prefix for generation: take up to len-1 digits from provided BIN (so luhnGen calculates final check digit)
+      let prefixForGen = bin ? bin.slice(0, Math.min(bin.length, len - 1)) : getCardPrefix('random');
+      let card = luhnGen(prefixForGen, len);
       let mm = getAnyValue(exp_month, null, 12);
       let yy = getAnyValue(exp_year, null, 0);
       let cvv = cvv_input ? cvv_input : (cvv_on ? randomCvv(network) : '');
@@ -701,45 +694,26 @@
     }
     document.getElementById('card-results').textContent = output.join('\n');
   }
-  document.getElementById('form-basic').addEventListener('submit', generateBasic);
-  document.getElementById('form-advanced').addEventListener('submit', generateAdvanced);
 
+  document.getElementById('form-basic').onsubmit = generateBasic;
+  document.getElementById('form-advanced').onsubmit = generateAdvanced;
+
+  // Clipboard: copy to clipboard function
   document.getElementById('copy-btn').onclick = function() {
-    let txt = document.getElementById('card-results').textContent;
-    if(txt) {
-      navigator.clipboard.writeText(txt);
-      this.textContent = 'Copied!';
-      setTimeout(()=>this.textContent='Copy', 1500);
-    }
-  }
+    let text = document.getElementById('card-results').textContent.trim();
+    if(!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      let btn = this;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+    });
+  };
+  // Reset: clear results and errors
   document.getElementById('reset-btn').onclick = function() {
     document.getElementById('card-results').textContent = '';
     document.getElementById('error-basic').textContent = '';
     document.getElementById('error-adv').textContent = '';
-  }
-
-  // viewer count simulation (initial value + gentle random updates)
-  (function initViewerBadge(){
-    const el = document.getElementById('viewer-count');
-    const badge = document.getElementById('viewer-badge');
-    if(!el || !badge) return;
-    let count = Math.floor(60 + Math.random() * 440); // initial viewers
-    const render = () => { el.textContent = count.toString(); };
-    render();
-    // subtle fluctuations: +/- small amounts occasionally
-    setInterval(() => {
-      const delta = Math.random() < 0.5 ? -1 : 1;
-      if(Math.random() < 0.25) count += delta * Math.floor(Math.random()*3);
-      // clamp
-      if(count < 1) count = 1;
-      if(count > 9999) count = 9999;
-      render();
-      // short pulse on change
-      badge.classList.remove('pulse');
-      void badge.offsetWidth;
-      badge.classList.add('pulse');
-    }, 2500);
-  })();
+  };
 </script>
 </body>
 </html>
