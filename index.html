@@ -19,6 +19,28 @@
       --glass-border: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
     }
 
+    /* top ad container */
+    #top-ad{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+      margin: 0 auto 14px;
+      pointer-events:auto;
+    }
+    /* keep ad visually separated on glass background */
+    #top-ad .ad-wrap{
+      display:inline-block;
+      width:468px;
+      height:60px;
+      border-radius:8px;
+      overflow:hidden;
+      background: rgba(255,255,255,0.02);
+      border:1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 6px 18px rgba(2,6,12,0.35);
+      backdrop-filter: blur(4px);
+    }
+
     html,body{height:100%;}
     body{
       margin:0;
@@ -322,6 +344,70 @@
 </head>
 <body>
   <div class="container">
+    <!-- Top centered advertisement -->
+    <div id="top-ad" aria-hidden="false">
+      <div class="ad-wrap">
+        <!-- visible debug fallback shown when remote ad is blocked -->
+        <div id="ad-debug" style="width:468px;height:60px;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;">
+          Advertisement
+        </div>
+
+        <!-- ad script (explicit https) -->
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '0879b0752ee352d3d0380b44140d09f1',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+          (function insertAd(){
+            try {
+              var s = document.createElement('script');
+              s.type = 'text/javascript';
+              s.async = true;
+              s.src = 'https://www.highperformanceformat.com/0879b0752ee352d3d0380b44140d09f1/invoke.js';
+              var parent = document.currentScript.parentNode;
+              parent.appendChild(s);
+            } catch(e){
+              /* fail silently - debug fallback remains visible */
+            }
+          })();
+        </script>
+
+        <!-- noscript fallback -->
+        <noscript>
+          <a href="#" title="Ad placeholder" style="display:inline-block;width:468px;height:60px;background:#0b1220;color:#9fbfcf;border-radius:6px;line-height:60px;text-align:center;border:1px solid rgba(255,255,255,0.02);">Advertisement</a>
+        </noscript>
+
+        <!-- hidden iframe fallback that will be removed if real ad loads -->
+        <iframe id="ad-fallback" srcdoc="<div style='width:468px;height:60px;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;'>Ad placeholder</div>" style="border:0;width:468px;height:60px;display:none;" aria-hidden="true"></iframe>
+
+        <!-- runtime check: hide debug placeholder if ad iframe is injected -->
+        <script type="text/javascript">
+          (function(){
+            var wrap = document.currentScript.parentNode;
+            var debug = document.getElementById('ad-debug');
+            function check() {
+              // if an iframe from remote provider appears, hide fallback
+              var iframes = wrap.getElementsByTagName('iframe');
+              for(var i=0;i<iframes.length;i++){
+                if(iframes[i].src && iframes[i].src.indexOf('highperformanceformat') !== -1){
+                  debug.style.display = 'none';
+                  return;
+                }
+              }
+              // try again a few times (script may load async)
+              attempts--;
+              if(attempts>0) setTimeout(check, 600);
+            }
+            var attempts = 6;
+            setTimeout(check, 400);
+          })();
+        </script>
+      </div>
+    </div>
+
     <nav>
       <div class="logo">M</div>
       <div class="title">MayaGen — Random Test Credit Card Numbers</div>
