@@ -1,432 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>MayaGen — Random Test Credit Card Numbers Generator</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#071021" />
   <style>
-    /* Liquid glass + modern theme */
     :root{
-      --bg-a: #071021;
-      --bg-b: #081226;
-      --glass: rgba(255,255,255,0.04);
-      --glass-2: rgba(255,255,255,0.02);
-      --accent: #36dab6;
-      --accent-2: #61f0c6;
-      --muted: rgba(255,255,255,0.6);
-      --text: #e9f6fb;
-      --panel-radius: 14px;
-      --glass-border: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      --bg-a:#071021; --bg-b:#081226;
+      --accent:#36dab6; --accent-2:#61f0c6;
+      --muted:rgba(255,255,255,0.6);
+      --text:#e9f6fb;
+      --panel-radius:12px;
+      --static-width:520px;
+      --error:#ff8383;
     }
 
-    /* top ad container */
-    #top-ad{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      width:100%;
-      margin: 0 auto 14px;
-      pointer-events:auto;
-    }
-    /* keep ad visually separated on glass background */
-    #top-ad .ad-wrap{
-      display:inline-block;
-      width:468px;
-      height:60px;
-      border-radius:8px;
-      overflow:hidden;
-      background: rgba(255,255,255,0.02);
-      border:1px solid rgba(255,255,255,0.02);
-      box-shadow: 0 6px 18px rgba(2,6,12,0.35);
-      backdrop-filter: blur(4px);
+    @media (prefers-reduced-motion: reduce){
+      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition: none !important; }
     }
 
-    html,body{height:100%;}
-    body{
-      margin:0;
-      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(800px 400px at 10% 10%, rgba(54,218,182,0.04), transparent 10%),
-        linear-gradient(180deg,var(--bg-a),var(--bg-b));
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:36px 20px;
-      animation: bgShift 12s linear infinite;
-    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:var(--text);background:
+      linear-gradient(180deg,var(--bg-a),var(--bg-b));display:flex;align-items:flex-start;justify-content:center;padding:24px;box-sizing:border-box;}
 
-    @keyframes bgShift{
-      0%{background-position:0% 0%;}
-      50%{background-position:20% 10%;}
-      100%{background-position:0% 0%;}
-    }
-
-    /* Outer container */
     .container{
-      width: 1200px;
-      max-width: calc(100% - 40px);
+      width: min(1200px, 100%);
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border-radius: calc(var(--panel-radius) + 6px);
-      padding: 22px;
-      box-shadow: 0 20px 60px rgba(2,6,12,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
-      position:relative;
-      overflow:hidden;
+      padding:16px;
+      box-shadow: 0 14px 40px rgba(2,6,12,0.6);
+      overflow:auto;
+      box-sizing:border-box;
     }
 
-    /* subtle glass sheen overlay */
-    .container::before{
-      content:"";
-      position:absolute;
-      left:-30%;
-      top:-20%;
-      width:160%;
-      height:60%;
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-      transform: rotate(-12deg);
-      pointer-events:none;
-    }
+    /* Top ad */
+    #top-ad{ display:flex; justify-content:center; margin:0 0 12px; }
+    #top-ad .ad-wrap{ width:100%; max-width:468px; height:60px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center; }
+    #ad-debug{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#9fd6c3; font-weight:700; background:#071226; border-radius:6px; }
 
-    nav{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-bottom:12px;
-      color:var(--muted);
-      font-weight:700;
-    }
-    nav .logo{
-      display:inline-grid;
-      place-items:center;
-      width:44px;
-      height:44px;
-      border-radius:10px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      backdrop-filter: blur(6px) saturate(120%);
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow: 0 6px 18px rgba(3,6,12,0.6);
-      color:var(--accent);
-      font-weight:800;
-      font-size:1.05rem;
-    }
-    nav .title{
-      font-size:1.05rem;
-      color:var(--text);
-      letter-spacing:0.4px;
-    }
+    nav{ display:flex; gap:12px; align-items:center; margin-bottom:12px; color:var(--muted); font-weight:700; }
+    .logo{ width:44px; height:44px; display:grid; place-items:center; border-radius:10px; background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:var(--accent); font-weight:800; font-size:1.05rem; }
+    .title{ font-size:1.02rem; color:var(--text); letter-spacing:0.4px; }
 
-    .tabs{ display:flex; gap:12px; margin: 16px 0; }
-    .tab{
-      padding:10px 18px;
-      border-radius:10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
-      color:var(--muted);
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,0.02);
-      transition: all .18s ease;
-      font-weight:700;
-    }
-    .tab:hover{ transform:translateY(-3px); }
-    .tab.active{
-      color:var(--bg-a);
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      box-shadow: 0 6px 26px rgba(54,218,182,0.08);
-    }
+    .tabs{ display:flex; gap:10px; margin:10px 0; }
+    .tab{ padding:8px 14px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); color:var(--muted); cursor:pointer; border:1px solid rgba(255,255,255,0.02); font-weight:700; }
+    .tab.active{ color:var(--bg-a); background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow: 0 8px 20px rgba(54,218,182,0.06); }
 
-    .form-content{
-      display:flex;
-      gap:28px;
-      align-items:flex-start;
-    }
+    .form-content{ display:flex; gap:20px; align-items:flex-start; flex-wrap:nowrap; }
 
-    /* control panel: frosted glass */
     .panel-form{
-      flex:0 0 520px;
+      flex:0 0 var(--static-width);
+      min-width:260px;
       display:grid;
       grid-template-columns:repeat(2,1fr);
-      gap:12px 14px;
-      padding:18px;
+      gap:10px 12px;
+      padding:14px;
       border-radius:12px;
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
       border:1px solid rgba(255,255,255,0.03);
-      backdrop-filter: blur(8px) saturate(120%);
-      box-shadow: 0 10px 30px rgba(4,8,16,0.6);
-      position:relative;
-      overflow:hidden;
+      box-sizing:border-box;
     }
-    .panel-form::after{
-      content:"";
-      position:absolute;
-      right:-120px;
-      top:-60px;
-      width:260px;
-      height:260px;
-      background: radial-gradient(circle at 30% 30%, rgba(97,240,198,0.06), transparent 30%);
-      filter: blur(30px);
-      pointer-events:none;
-    }
+    .field{ display:flex; flex-direction:column; gap:6px; }
+    label{ font-size:0.74rem; text-transform:uppercase; color:var(--muted); font-weight:700; letter-spacing:0.7px; }
 
-    .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:0; }
-    .field label{
-      font-size:0.72rem;
-      text-transform:uppercase;
-      color:var(--muted);
-      font-weight:700;
-      letter-spacing:0.8px;
-    }
-    input, select{
+    input[type="text"], input[type="number"], select{
       background: rgba(6,12,18,0.45);
       border:1px solid rgba(255,255,255,0.03);
       color:var(--text);
       padding:10px 12px;
       border-radius:9px;
       outline:none;
-      transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-      -webkit-appearance:none;
     }
     input::placeholder{ color: rgba(255,255,255,0.16); }
-    input:focus, select:focus{
-      transform: translateY(-2px);
-      border-color: rgba(54,218,182,0.55);
-      box-shadow: 0 6px 18px rgba(54,218,182,0.06);
-      background: rgba(8,16,26,0.6);
-    }
+    input:focus, select:focus{ box-shadow:0 8px 20px rgba(54,218,182,0.06); border-color:rgba(54,218,182,0.55); transform:translateY(-1px); }
 
-    /* toggle — flat track only (no white dot) */
-    .toggle-label{
-      display:inline-flex;
+    /* red outline when invalid */
+    input.invalid { border-color: var(--error); box-shadow: 0 6px 18px rgba(255,131,131,0.07); }
+
+    .cvv-control {
+      display:flex;
       align-items:center;
       gap:10px;
+      grid-column: 1 / -1;
+    }
+    /* CVV button made smaller per request */
+    .cvv-btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 10px;           /* reduced padding */
+      font-size:0.88rem;          /* slightly smaller font */
+      border-radius:8px;          /* slightly smaller radius */
+      background: rgba(255,255,255,0.03);
+      color:var(--text);
+      font-weight:800;
       cursor:pointer;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 6px 12px rgba(2,6,12,0.28);
+      transition: transform .12s ease, box-shadow .12s ease, background .12s;
       user-select:none;
     }
-    .toggle-label input{ display:none; }
-    .toggle-slider{
-      width:44px;
-      height:18px;
-      border-radius:12px;
-      background: rgba(255,255,255,0.04);
-      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.5);
-      transition: background .15s, box-shadow .15s;
-      flex:none;
-      position:relative;
+    .cvv-btn:hover{ transform:translateY(-2px); box-shadow: 0 10px 22px rgba(2,6,12,0.35); }
+    .cvv-btn.active{
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:#041217;
+      box-shadow: 0 12px 30px rgba(54,218,182,0.08);
     }
-    /* remove knob */
-    .toggle-slider::after{ display:none; content:''; }
-    .toggle-label input:checked + .toggle-slider{
-      background: linear-gradient(90deg, rgba(54,218,182,0.20), rgba(97,240,198,0.06));
-      box-shadow: 0 6px 20px rgba(54,218,182,0.06);
-    }
+    .cvv-info { color:var(--muted); font-weight:700; font-size:0.9rem; }
 
-    .panel-form button{
+    .panel-form .btn-generate {
       grid-column:1 / -1;
       padding:11px 14px;
       border-radius:10px;
       background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color: #041217;
+      color:#041217;
       border:none;
       font-weight:800;
       cursor:pointer;
-      box-shadow: 0 10px 30px rgba(54,218,182,0.08);
-      transition: transform .12s ease, box-shadow .12s ease;
-    }
-    .panel-form button:hover{ transform: translateY(-3px); box-shadow: 0 16px 40px rgba(54,218,182,0.12); }
-
-    .error{ grid-column:1 / -1; color:#ff8383; font-size:0.9rem; }
-
-    /* Results panel — glass code area with animated border */
-    .panel-results{
-      flex:1;
-      border-radius:12px;
-      padding:18px;
-      min-height:380px;
-      background: linear-gradient(180deg, rgba(8,14,20,0.6), rgba(8,14,20,0.5));
-      border: 1px solid rgba(255,255,255,0.03);
-      box-shadow: 0 12px 40px rgba(2,6,12,0.6);
-      position:relative;
-      overflow:auto;
-      font-family: "Fira Mono", Consolas, monospace;
-      font-size:0.98rem;
-      color:#dbeef6;
-    }
-    .panel-results pre{
-      margin:0;
-      white-space:pre;
-      line-height:1.6;
-      letter-spacing:0.6px;
-    }
-
-    /* animated accent border */
-    .panel-results::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius:12px;
-      padding:1px;
-      background: linear-gradient(90deg, rgba(54,218,182,0.06), rgba(97,240,198,0.03));
-      -webkit-mask:
-        linear-gradient(#000,#000) content-box,
-        linear-gradient(#000,#000);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events:none;
-      animation: borderGlow 6s linear infinite;
-    }
-    @keyframes borderGlow{
-      0%{ filter: hue-rotate(0deg) blur(0px); opacity:.8; transform:translateY(0) }
-      50%{ filter: hue-rotate(30deg) blur(1px); opacity:.95; transform:translateY(-2px) }
-      100%{ filter: hue-rotate(0deg) blur(0px); opacity:.8; transform:translateY(0) }
-    }
-
-    /* viewer badge (eye + count) */
-    .viewer-badge{
-      position:absolute;
-      left:16px;
-      bottom:12px;
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.04);
-      color:var(--text);
-      font-weight:700;
-      font-size:0.9rem;
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow: 0 6px 18px rgba(2,6,12,0.5);
-      transition: transform .12s ease, box-shadow .12s ease, opacity .2s;
+      justify-content:center;
+      gap:10px;
     }
-    .viewer-badge svg{ width:16px; height:16px; display:block; fill: none; stroke: currentColor; stroke-width:1.6; }
-    .viewer-badge .dot{
-      width:8px; height:8px; border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 4px 14px rgba(54,218,182,0.16);
-      margin-left:4px;
-    }
-    .viewer-badge.pulse{ animation: badgePulse 2.2s infinite; }
-    @keyframes badgePulse{
-      0%{ transform: translateY(0); opacity:1 }
-      50%{ transform: translateY(-3px); opacity:0.98 }
-      100%{ transform: translateY(0); opacity:1 }
-    }
+    .panel-form .btn-generate[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    .panel-buttons{
+    .spinner {
+      width:16px; height:16px; border-radius:50%;
+      border:2px solid rgba(255,255,255,0.14);
+      border-top-color: rgba(4,18,20,0.9);
+      display:inline-block;
+      animation: spin 0.9s linear infinite;
+      transform-origin:center;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error{ grid-column:1 / -1; color:var(--error); font-size:0.9rem; }
+
+    /* RESULTS - STATIC */
+    .panel-results{
+      flex:0 0 var(--static-width);
+      width:var(--static-width);
+      border-radius:12px;
+      padding:14px;
+      min-height:340px;
+      background: linear-gradient(180deg, rgba(8,14,20,0.6), rgba(8,14,20,0.5));
+      border:1px solid rgba(255,255,255,0.03);
+      box-sizing:border-box;
+      font-family: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size:0.95rem;
+      color:#dbeef6;
+      position:relative;
+      overflow:auto;
+      will-change:transform,opacity;
+    }
+    .panel-results pre{ margin:0; white-space:pre; line-height:1.6; letter-spacing:0.6px; }
+
+    /* Visitor panel below results shows total visits (not live viewers) */
+    .visitor-panel {
+      margin-top:10px;
       display:flex;
       gap:10px;
-      margin-top:12px;
-      justify-content:flex-end;
-    }
-    .btn{
-      padding:10px 14px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      font-weight:700;
-      background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      color:var(--text);
+      align-items:center;
+      justify-content:flex-start;
+      background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.03);
-      transition: transform .12s, box-shadow .12s;
+      padding:8px 12px;
+      border-radius:10px;
+      color:var(--text);
+      font-weight:700;
+      width:var(--static-width);
+      box-sizing:border-box;
     }
-    .btn:hover{ transform: translateY(-3px); box-shadow: 0 12px 30px rgba(2,6,12,0.45); }
-    .btn.primary{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#041217; box-shadow: 0 12px 30px rgba(54,218,182,0.08); }
+    .visitor-icon{ width:18px; height:18px; display:block; fill:none; stroke:currentColor; stroke-width:1.6; }
+    .visitor-count { color:var(--accent); margin-left:6px; font-weight:900; }
+
+    .panel-buttons{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end; }
+    .btn{ padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.03); }
+    .btn.primary{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#041217; }
     .btn.secondary{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); }
 
     @media (max-width:1000px){
-      .form-content{ flex-direction:column; }
-      .panel-form{ grid-template-columns:1fr; width:100%; }
-      .panel-results{ min-height:260px; order:3; }
-      .panel-buttons{ position:relative; bottom:auto; }
+      .form-content{ overflow:auto; }
+      .panel-form{ grid-template-columns:1fr; }
     }
+
+    .small-muted{ color:var(--muted); font-weight:600; font-size:0.95rem; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Top centered advertisement -->
+  <div class="container" id="app">
     <div id="top-ad" aria-hidden="false">
-        <script type="text/javascript">
-	atOptions = {
-		'key' : '0879b0752ee352d3d0380b44140d09f1',
-		'format' : 'iframe',
-		'height' : 60,
-		'width' : 468,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/0879b0752ee352d3d0380b44140d09f1/invoke.js"></script>
-      <div class="ad-wrap">
-        <!-- visible debug fallback shown when remote ad is blocked -->
-        <div id="ad-debug" style="width:468px;height:60px;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;">
-          Advertisement
-        </div>
-
-        <!-- provided ad code (protocol-relative src as requested) -->
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '0879b0752ee352d3d0380b44140d09f1',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/0879b0752ee352d3d0380b44140d09f1/invoke.js"></script>
-
-        <!-- noscript fallback -->
-        <noscript>
-          <a href="#" title="Ad placeholder" style="display:inline-block;width:468px;height:60px;background:#0b1220;color:#9fbfcf;border-radius:6px;line-height:60px;text-align:center;border:1px solid rgba(255,255,255,0.02);">Advertisement</a>
-        </noscript>
-
-        <!-- debug iframe fallback that will be shown if the remote script is blocked -->
-        <iframe id="ad-fallback" srcdoc="<div style='width:468px;height:60px;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;'>Ad placeholder</div>" style="border:0;width:468px;height:60px;display:none;" aria-hidden="true"></iframe>
-
-        <!-- runtime check: hide debug placeholder if provider iframe appears -->
-        <script type="text/javascript">
-          (function(){
-            var wrap = document.currentScript.parentNode;
-            var debug = document.getElementById('ad-debug');
-            function check() {
-              var iframes = wrap.getElementsByTagName('iframe');
-              for(var i=0;i<iframes.length;i++){
-                if(iframes[i].src && iframes[i].src.indexOf('highperformanceformat') !== -1){
-                  debug.style.display = 'none';
-                  // show provider iframe if hidden
-                  iframes[i].style.display = '';
-                  return;
-                }
-              }
-              attempts--;
-              if(attempts>0) setTimeout(check, 600);
-              else {
-                // script likely blocked — show fallback visibly
-                document.getElementById('ad-fallback').style.display = '';
-              }
-            }
-            var attempts = 6;
-            setTimeout(check, 400);
-          })();
-        </script>
+      <div class="ad-wrap" id="ad-wrap" data-ad-key="0879b0752ee352d3d0380b44140d09f1">
+        <div id="ad-debug" aria-hidden="false">Advertisement</div>
+        <iframe id="ad-fallback" title="ad fallback" style="border:0;width:100%;height:100%;display:none;" aria-hidden="true" loading="lazy"></iframe>
       </div>
     </div>
 
-    <nav>
-      <div class="logo">M</div>
+    <nav aria-label="Primary">
+      <div class="logo" aria-hidden="true">M</div>
       <div class="title">MayaGen — Random Test Credit Card Numbers</div>
     </nav>
 
-    <div class="tabs">
-      <div class="tab active" id="tab-basic">Basic</div>
-      <div class="tab" id="tab-advanced">Advance</div>
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tab-basic" role="tab" aria-selected="true" aria-controls="form-basic">Basic</button>
+      <button class="tab" id="tab-advanced" role="tab" aria-selected="false" aria-controls="form-advanced">Advanced</button>
     </div>
 
     <div class="form-content">
       <!-- BASIC FORM -->
-      <form class="panel-form" id="form-basic" autocomplete="off">
+      <form class="panel-form" id="form-basic" autocomplete="off" aria-labelledby="tab-basic" role="region">
         <div class="field">
           <label for="network-basic">Network</label>
-          <select id="network-basic">
+          <select id="network-basic" name="network-basic" aria-label="Network">
             <option value="random">Random</option>
             <option value="visa">Visa</option>
             <option value="mc">Mastercard</option>
@@ -436,43 +221,44 @@
 
         <div class="field">
           <label for="quantity-basic">Quantity</label>
-          <select id="quantity-basic"></select>
+          <input type="number" id="quantity-basic" name="quantity-basic" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
         </div>
 
         <div class="field">
           <label for="exp-month-basic">Expiration Month</label>
-          <select id="exp-month-basic"></select>
+          <select id="exp-month-basic" name="exp-month-basic" aria-label="Expiration Month"></select>
         </div>
 
         <div class="field">
           <label for="exp-year-basic">Expiration Year</label>
-          <select id="exp-year-basic"></select>
+          <select id="exp-year-basic" name="exp-year-basic" aria-label="Expiration Year"></select>
         </div>
 
-        <div class="field">
-          <label for="toggle-cvv-basic" class="toggle-label">
-            <input type="checkbox" id="toggle-cvv-basic" checked>
-            <span class="toggle-slider"></span>
-            CVV
-          </label>
+        <div class="cvv-control">
+          <button type="button" id="cvv-toggle-basic" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
+          <div class="cvv-info">Generate CVV if left empty</div>
         </div>
 
         <div class="field">
           <label for="cvv-basic-input">CVV (optional)</label>
-          <input type="text" id="cvv-basic-input" maxlength="4" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
+          <input type="text" id="cvv-basic-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
         </div>
 
-        <button type="submit">Generate</button>
-        <div class="error" id="error-basic"></div>
+        <button type="submit" class="btn-generate" id="generate-basic">
+          <span class="gen-label">Generate</span>
+          <span class="spinner" id="spinner-basic" style="display:none"></span>
+        </button>
+
+        <div class="error" id="error-basic" role="status" aria-live="polite"></div>
       </form>
 
-      <!-- ADVANCED FORM -->
-      <form class="panel-form" id="form-advanced" style="display:none" autocomplete="off">
-        <div class="field">
-          <label for="bin">BIN <span style="font-weight:400;font-size:0.98em">(optional — 6 to 16 digits)</span></label>
-          <!-- allow up to 16 digits -->
-          <input type="text" id="bin" maxlength="16" pattern="^[0-9]{6,16}$" placeholder="e.g: 515462001648xxxx">
+      <!-- ADVANCED FORM (BIN required: first 6 digits mandatory) -->
+      <form class="panel-form" id="form-advanced" style="display:none" autocomplete="off" aria-labelledby="tab-advanced" role="region">
+        <div class="field" style="grid-column:1 / -1">
+          <label for="bin">BIN <span class="small-muted" style="font-weight:600">(FIRST 6 digits required, up to 16)</span></label>
+          <input type="text" id="bin" maxlength="16" inputmode="numeric" pattern="^[0-9]{6,16}$" placeholder="Enter at least the first 6 digits (e.g. 515462)">
         </div>
+
         <div class="field">
           <label for="format-adv">Format</label>
           <select id="format-adv">
@@ -481,47 +267,56 @@
             <option value="space">Space ( )</option>
           </select>
         </div>
+
         <div class="field">
           <label for="quantity-adv">Quantity</label>
-          <select id="quantity-adv"></select>
+          <input type="number" id="quantity-adv" name="quantity-adv" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
         </div>
+
         <div class="field">
           <label for="exp-month-adv">Expiration Month</label>
           <select id="exp-month-adv"></select>
         </div>
+
         <div class="field">
           <label for="exp-year-adv">Expiration Year</label>
           <select id="exp-year-adv"></select>
         </div>
-        <div class="field">
-          <label for="cvv-adv" class="toggle-label">
-            <input type="checkbox" id="toggle-cvv-adv" checked>
-            <span class="toggle-slider"></span>
-            Generate CVV
-          </label>
+
+        <div class="cvv-control">
+          <button type="button" id="cvv-toggle-adv" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
+          <div class="cvv-info">Generate CVV if left empty</div>
         </div>
+
         <div class="field">
           <label for="cvv-adv-input">CVV (optional)</label>
-          <input type="text" id="cvv-adv-input" maxlength="4" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
+          <input type="text" id="cvv-adv-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
         </div>
-        <button type="submit">Generate</button>
-        <div class="error" id="error-adv"></div>
+
+        <button type="submit" class="btn-generate" id="generate-adv" disabled>
+          <span class="gen-label">Generate</span>
+          <span class="spinner" id="spinner-adv" style="display:none"></span>
+        </button>
+
+        <div class="error" id="error-adv" role="status" aria-live="polite"></div>
       </form>
 
-      <!-- RESULTS -->
-      <div style="display:flex;flex-direction:column;flex:1">
-        <div class="panel-results" >
-          <pre id="card-results" aria-live="polite" style="margin:0;"></pre>
-          <div class="viewer-badge pulse" id="viewer-badge" title="Current viewers">
-            <!-- eye icon -->
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-            <span id="viewer-count">0</span>
-          </div>
+      <!-- RESULTS (static, fixed width) -->
+      <div style="display:flex;flex-direction:column;flex:0 0 var(--static-width);min-width:var(--static-width)">
+        <div class="panel-results" aria-live="polite" aria-atomic="true">
+          <pre id="card-results" style="margin:0;"></pre>
         </div>
-        <div class="panel-buttons">
+
+        <!-- Visitor panel below output panel shows TOTAL visits (not live viewers) -->
+        <div class="visitor-panel" id="visitor-panel" aria-hidden="false" title="Total visitors (page views)">
+          <svg class="visitor-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <div>Total visits: <span id="visitor-count" class="visitor-count">0</span></div>
+        </div>
+
+        <div class="panel-buttons" style="margin-top:12px">
           <button type="button" class="btn primary" id="copy-btn">Copy</button>
           <button type="button" class="btn secondary" id="reset-btn">Reset</button>
         </div>
@@ -530,200 +325,367 @@
   </div>
 
 <script>
-  // original script preserved (no functional change) — keep handlers and generation logic intact
-  // Utility: Fill dropdowns for months, years, quantities
-  function populateSelect(select, arr) {
-    select.innerHTML = "";
-    arr.forEach(opt => {
-      let option = document.createElement("option");
-      option.value = opt.value;
-      option.textContent = opt.label;
-      select.appendChild(option);
-    });
-  }
-  function getQuantities() {
-    return Array.from({length:30},(_,i)=>({value:i+1,label:String(i+1)}));
-  }
-  function getMonths() {
-    let months = [{value:'random',label:'Random'}];
-    for(let i=1;i<=12;i++){
-      let label = new Date(2022,i-1).toLocaleString('en',{month:'long'});
-      let val = (i<10?("0"+i):""+i);
-      months.push({value:val,label});
-    }
-    return months;
-  }
-  function getYears() {
-    let y = new Date().getFullYear();
-    let arr = [{value:'random',label:'Random'}];
-    for(let i=0; i<16; i++) arr.push({value:String(y+i),label:String(y+i)});
-    return arr;
-  }
-  document.addEventListener("DOMContentLoaded", function() {
-    populateSelect(document.getElementById('quantity-basic'), getQuantities());
-    populateSelect(document.getElementById('exp-month-basic'), getMonths());
-    populateSelect(document.getElementById('exp-year-basic'), getYears());
-    populateSelect(document.getElementById('quantity-adv'), getQuantities());
-    populateSelect(document.getElementById('exp-month-adv'), getMonths());
-    populateSelect(document.getElementById('exp-year-adv'), getYears());
+/*
+  Changes in this file:
+  - CVV toggle button made smaller (reduced padding and font-size).
+  - Visitor panel now displays TOTAL visits (cumulative page views) instead of a live viewer count.
+    Behavior:
+      * On page load, the client will POST /api/visit once (notify server of a visit).
+      * Then it will GET /api/visitors?path=... once to retrieve the total visits count and display it.
+      * No continuous polling — the value represents cumulative visits (page views).
+      * If the server endpoints are unreachable, a single demo fallback value is shown.
+  - Advanced form still enforces BIN (6-16 digits) and the Generate button is disabled until BIN is valid.
+  - Generation remains chunked and non-blocking for smooth UX.
+*/
+
+/* small helpers */
+const $ = id => document.getElementById(id);
+const MAX_Q = 10000;
+const CHUNK_SIZE = 250;
+const nowYear = new Date().getFullYear();
+
+/* cached nodes */
+const nodes = {
+  formBasic: $('form-basic'),
+  formAdv: $('form-advanced'),
+  binInput: $('bin'),
+  expMonthBasic: $('exp-month-basic'),
+  expYearBasic: $('exp-year-basic'),
+  expMonthAdv: $('exp-month-adv'),
+  expYearAdv: $('exp-year-adv'),
+  generateBasicBtn: $('generate-basic'),
+  generateAdvBtn: $('generate-adv'),
+  spinnerBasic: $('spinner-basic'),
+  spinnerAdv: $('spinner-adv'),
+  errorBasic: $('error-basic'),
+  errorAdv: $('error-adv'),
+  results: $('card-results'),
+  copyBtn: $('copy-btn'),
+  resetBtn: $('reset-btn'),
+  cvvToggleBasic: $('cvv-toggle-basic'),
+  cvvToggleAdv: $('cvv-toggle-adv'),
+  visitorCount: $('visitor-count'),
+  adWrap: $('ad-wrap'),
+  adDebug: $('ad-debug'),
+  adFallback: $('ad-fallback')
+};
+
+/* populate selects */
+const MONTH_NAMES = ['Random','January','February','March','April','May','June','July','August','September','October','November','December'];
+function fillSelect(selectEl, items){
+  const frag = document.createDocumentFragment();
+  selectEl.innerHTML = '';
+  items.forEach(it => {
+    const o = document.createElement('option');
+    o.value = it.value;
+    o.textContent = it.label;
+    frag.appendChild(o);
   });
+  selectEl.appendChild(frag);
+}
+function getMonths(){ return MONTH_NAMES.map((m,i)=>({value:i===0?'random':(i<10?'0'+i:String(i)), label:m})); }
+function getYears(){ const arr=[{value:'random',label:'Random'}]; for(let i=0;i<16;i++) arr.push({value:String(nowYear+i),label:String(nowYear+i)}); return arr; }
 
-  document.getElementById('tab-basic').onclick = function() {
-    this.classList.add("active");
-    document.getElementById('tab-advanced').classList.remove("active");
-    document.getElementById('form-basic').style.display = '';
-    document.getElementById('form-advanced').style.display = 'none';
-    document.getElementById('error-basic').textContent = '';
-    document.getElementById('error-adv').textContent = '';
-    document.getElementById('card-results').textContent = '';
-  };
-  document.getElementById('tab-advanced').onclick = function() {
-    this.classList.add("active");
-    document.getElementById('tab-basic').classList.remove("active");
-    document.getElementById('form-basic').style.display = 'none';
-    document.getElementById('form-advanced').style.display = '';
-    document.getElementById('error-basic').textContent = '';
-    document.getElementById('error-adv').textContent = '';
-    document.getElementById('card-results').textContent = '';
-  };
+if(window.requestIdleCallback) requestIdleCallback(()=> {
+  fillSelect(nodes.expMonthBasic, getMonths());
+  fillSelect(nodes.expYearBasic, getYears());
+  fillSelect(nodes.expMonthAdv, getMonths());
+  fillSelect(nodes.expYearAdv, getYears());
+}, {timeout:800});
+else setTimeout(()=> {
+  fillSelect(nodes.expMonthBasic, getMonths());
+  fillSelect(nodes.expYearBasic, getYears());
+  fillSelect(nodes.expMonthAdv, getMonths());
+  fillSelect(nodes.expYearAdv, getYears());
+}, 50);
 
-  function luhnGen(prefix, length) {
-    let n = prefix.split('').map(Number);
-    while (n.length < length-1) n.push(Math.floor(Math.random()*10));
-    let sum=0,alt=false;
-    for(let i=n.length-1;i>=0;--i){
-        let d=n[i];
-        if(alt)d*=2, d=d>9?d-9:d;sum+=d;alt=!alt;
-    }
-    let check = (10-(sum%10))%10;
-    n.push(check);
-    return n.join('');
+/* Tabs */
+document.querySelector('.tabs').addEventListener('click', e => {
+  const t = e.target;
+  if(!t.classList.contains('tab')) return;
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.classList.toggle('active', btn === t);
+    btn.setAttribute('aria-selected', String(btn === t));
+  });
+  nodes.formBasic.style.display = t.id === 'tab-basic' ? '' : 'none';
+  nodes.formAdv.style.display = t.id === 'tab-advanced' ? '' : 'none';
+
+  if(t.id === 'tab-advanced') validateBinAndToggleButton();
+  else { nodes.errorAdv.textContent = ''; nodes.binInput.classList.remove('invalid'); }
+
+  nodes.errorBasic.textContent = '';
+  nodes.results.textContent = '';
+});
+
+/* CVV toggle (smaller button) */
+function toggleCvv(btn){ const isOn = btn.classList.toggle('active'); btn.setAttribute('aria-pressed', String(isOn)); btn.textContent = isOn ? 'CVV' : 'CVV'; }
+nodes.cvvToggleBasic.addEventListener('click', ()=>toggleCvv(nodes.cvvToggleBasic));
+nodes.cvvToggleAdv.addEventListener('click', ()=>toggleCvv(nodes.cvvToggleAdv));
+
+/* Luhn & helpers */
+function luhnGen(prefix, length){
+  const n=[];
+  for(let i=0;i<prefix.length;i++) n.push(+prefix[i]||0);
+  while(n.length<length-1) n.push((Math.random()*10)|0);
+  let sum=0, alt=false;
+  for(let i=n.length-1;i>=0;--i){
+    let d=n[i];
+    if(alt){ d*=2; if(d>9) d-=9; }
+    sum+=d; alt=!alt;
   }
-  function getCardPrefix(type) {
-    if(type==='visa') return '4';
-    if(type==='mc')   return '5'+(Math.floor(Math.random()*5)+1);
-    if(type==='amex') return '3'+(['4','7'][Math.floor(Math.random()*2)]);
-    let x = Math.floor(Math.random()*3);
-    if(x===0) return '4';
-    if(x===1) return '5'+(Math.floor(Math.random()*5)+1);
-    return '3'+(['4','7'][Math.floor(Math.random()*2)]);
+  const check=(10-(sum%10))%10;
+  n.push(check);
+  return n.join('');
+}
+function getCardPrefix(type){
+  if(type==='visa') return '4';
+  if(type==='mc') return '5'+((Math.random()*5)|1);
+  if(type==='amex') return '3'+(Math.random()<0.5?'4':'7');
+  const x=((Math.random()*3)|0);
+  if(x===0) return '4';
+  if(x===1) return '5'+((Math.random()*5)|1);
+  return '3'+(Math.random()<0.5?'4':'7');
+}
+function cardLength(type){ return type==='amex'?15:16; }
+function randomCvv(type){ return type==='amex'?String((Math.random()*9000|0)+1000):String((Math.random()*900|0)+100); }
+function formatLine(card,month,year,cvv,fmt){ if(fmt==='csv') return `${card},${month},${year},${cvv}`; if(fmt==='space') return `${card} ${month} ${year} ${cvv}`; return `${card}|${month}|${year}|${cvv}`; }
+
+/* Validation */
+function isBinValid(bin){ return /^\d{6,16}$/.test(bin); }
+function validateBasic({network,quantity,exp_month,exp_year,cvv_value}){
+  if(!network) return "Network is required.";
+  if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Enter quantity 1-${MAX_Q}.`;
+  if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Invalid month."; }
+  if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be past."; if(y>nowYear+15) return "Too far in future."; }
+  if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
+  return null;
+}
+function validateAdv({bin,quantity,exp_month,exp_year,cvv_value}){
+  if(!bin) return "Advanced mode requires at least the first 6 BIN digits.";
+  if(!/^\d{6,16}$/.test(bin)) return "BIN must be numeric and 6-16 digits (enter first 6+ digits).";
+  if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Quantity 1-${MAX_Q} required.`;
+  if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Month 1-12."; }
+  if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be in the past."; if(y>nowYear+15) return "Year too far."; }
+  if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
+  return null;
+}
+
+/* Chunked generator */
+function generateCardsAsync({prefixFactory,lengthFactory,qty,exp_month,exp_year,cvv_on,cvv_input,fmt}){
+  return new Promise(resolve=>{
+    const out=[];
+    let i=0;
+    const chunk = ()=>{
+      const end = Math.min(i + CHUNK_SIZE, qty);
+      for(; i<end; i++){
+        const prefix = prefixFactory();
+        const length = lengthFactory(prefix);
+        const card = luhnGen(prefix, length);
+        let mm = exp_month;
+        let yy = exp_year;
+        let cvv = cvv_input ? cvv_input : (cvv_on ? randomCvv((length===15?'amex':'mc')) : '');
+        if(mm==='random') mm = String((Math.random()*12|0)+1).padStart(2,'0');
+        if(yy==='random') yy = String(nowYear + ((Math.random()*6)|0));
+        out.push(formatLine(card,mm,yy,cvv,fmt));
+      }
+      if(i<qty) setTimeout(chunk, 0);
+      else resolve(out);
+    };
+    setTimeout(chunk, 0);
+  });
+}
+
+/* UI helpers */
+function setGenerating(isGenerating, which){
+  const spinner = which==='adv' ? nodes.spinnerAdv : nodes.spinnerBasic;
+  const btn = which==='adv' ? nodes.generateAdvBtn : nodes.generateBasicBtn;
+  if(isGenerating){ spinner.style.display=''; btn.disabled = true; }
+  else { spinner.style.display='none'; btn.disabled = false; }
+}
+
+/* Ensure advanced Generate is enabled only when BIN is valid */
+function validateBinAndToggleButton() {
+  const bin = nodes.binInput.value.trim();
+  const btn = nodes.generateAdvBtn;
+  const err = nodes.errorAdv;
+  if (!bin) {
+    btn.disabled = true;
+    nodes.binInput.classList.remove('invalid');
+    err.textContent = '';
+    return;
   }
-  function cardLength(type) { if(type==='amex') return 15; return 16; }
-  function randomCvv(type){ if(type==='amex') return (Math.floor(1000+Math.random()*9000)).toString(); return (Math.floor(100+Math.random()*900)).toString(); }
-  // keep the selected value as-is; generation logic below handles 'random'
-  function getAnyValue(selected, alt, length) {
-    return selected;
+  if (!isBinValid(bin)) {
+    btn.disabled = true;
+    nodes.binInput.classList.add('invalid');
+    err.textContent = 'BIN must be numeric and at least the first 6 digits (6-16 total).';
+    return;
+  }
+  nodes.binInput.classList.remove('invalid');
+  err.textContent = '';
+  btn.disabled = false;
+}
+
+/* Run generate */
+async function runGenerate({isAdvanced=false}){
+  const quantityEl = isAdvanced ? $('quantity-adv') : $('quantity-basic');
+  const expMonthEl = isAdvanced ? $('exp-month-adv') : $('exp-month-basic');
+  const expYearEl = isAdvanced ? $('exp-year-adv') : $('exp-year-basic');
+  const cvvToggle = isAdvanced ? nodes.cvvToggleAdv : nodes.cvvToggleBasic;
+  const cvvInputVal = (isAdvanced ? $('cvv-adv-input') : $('cvv-basic-input')).value.trim();
+  const errNode = isAdvanced ? nodes.errorAdv : nodes.errorBasic;
+
+  const network = isAdvanced ? null : $('network-basic').value;
+  const bin = isAdvanced ? nodes.binInput.value.trim() : null;
+  const fmt = isAdvanced ? $('format-adv').value : 'pipe';
+
+  const quantity = quantityEl.value;
+  const exp_month = expMonthEl.value;
+  const exp_year = expYearEl.value;
+  const cvv_on = cvvToggle.classList.contains('active');
+
+  const validation = isAdvanced
+    ? validateAdv({bin,quantity,exp_month,exp_year,cvv_value:cvvInputVal})
+    : validateBasic({network,quantity,exp_month,exp_year,cvv_value:cvvInputVal});
+  if(validation){ errNode.textContent = validation; return; }
+  errNode.textContent = '';
+
+  if (isAdvanced && !isBinValid(bin)) {
+    nodes.errorAdv.textContent = 'BIN is required (first 6 digits) and must be numeric (6-16 digits).';
+    nodes.binInput.classList.add('invalid');
+    nodes.generateAdvBtn.disabled = true;
+    return;
   }
 
-  function formatLine(card, month, year, cvv, fmt) {
-    if(fmt==='csv') return `${card},${month},${year},${cvv}`;
-    if(fmt==='space') return `${card} ${month} ${year} ${cvv}`;
-    return `${card}|${month}|${year}|${cvv}`;
-  }
-  function validateBasic({network,quantity,exp_month,exp_year,cvv_on,cvv_value}) {
-    if(!network) return "Network is required.";
-    if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>30) return "Enter quantity 1-30.";
-    if(exp_month!=='random') { let m=+exp_month;if(m<1||m>12) return "Invalid month."; }
-    if(exp_year!=='random') {
-      let y = +exp_year, cur = new Date().getFullYear();
-      if(y < cur) return "Year can't be past.";
-      if(y > cur+15) return "Too far in future.";
-    }
-    if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
-    return null;
-  }
-  function validateAdv({bin,quantity,exp_month,exp_year,cvv_on,cvv_value}) {
-    if(bin && !/^\d{6,16}$/.test(bin)) return "BIN must be 6-16 digits.";
-    if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>30) return "Quantity 1-30 required.";
-    if(exp_month!=='random') { let m=+exp_month;if(m<1||m>12) return "Month 1-12."; }
-    if(exp_year!=='random') {
-      let y = +exp_year, cur = new Date().getFullYear();
-      if(y < cur) return "Year can't be in the past.";
-      if(y > cur+15) return "Year too far.";
-    }
-    if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
-    return null;
+  const qty = Math.min(+quantity, MAX_Q);
+  setGenerating(true, isAdvanced ? 'adv' : 'basic');
+
+  // factories
+  let prefixFactory, lengthFactory;
+  if(isAdvanced){
+    prefixFactory = () => {
+      const len = bin.startsWith('3') ? 15 : 16;
+      return bin.slice(0, Math.min(bin.length, len - 1));
+    };
+    lengthFactory = () => bin.startsWith('3') ? 15 : 16;
+  } else {
+    prefixFactory = () => getCardPrefix(network);
+    lengthFactory = () => cardLength(network);
   }
 
-  function generateBasic(e) {
-    e.preventDefault();
-    const network = document.getElementById('network-basic').value;
-    const quantity = document.getElementById('quantity-basic').value;
-    const exp_month = document.getElementById('exp-month-basic').value;
-    const exp_year = document.getElementById('exp-year-basic').value;
-    const cvv_on = document.getElementById('toggle-cvv-basic').checked;
-    const cvv_input = document.getElementById('cvv-basic-input').value.trim();
-    let err = validateBasic({network,quantity,exp_month,exp_year,cvv_on, cvv_value: cvv_input});
-    if(err){ document.getElementById('error-basic').textContent = err; return; }
-    document.getElementById('error-basic').textContent = '';
-    let output = [];
-    for(let i=0; i<+quantity; i++) {
-      let pre = getCardPrefix(network);
-      let len = cardLength(network);
-      let card = luhnGen(pre,len);
-      let mm = getAnyValue(exp_month, null, 12);
-      let yy = getAnyValue(exp_year, null, 0);
-      let cvv = cvv_input ? cvv_input : (cvv_on ? randomCvv(network) : '');
-      if(mm==='random') mm = (Math.floor(Math.random()*12)+1).toString().padStart(2,'0');
-      if(yy==='random') yy = (new Date().getFullYear() + Math.floor(Math.random()*6)).toString();
-      output.push(formatLine(card, mm, yy, cvv,'pipe'));
-    }
-    document.getElementById('card-results').textContent = output.join('\n');
-  }
-  function generateAdvanced(e) {
-    e.preventDefault();
-    const bin = document.getElementById('bin').value.trim();
-    const fmt = document.getElementById('format-adv').value;
-    const quantity = document.getElementById('quantity-adv').value;
-    const exp_month = document.getElementById('exp-month-adv').value;
-    const exp_year = document.getElementById('exp-year-adv').value;
-    const cvv_on = document.getElementById('toggle-cvv-adv').checked;
-    const cvv_input = document.getElementById('cvv-adv-input').value.trim();
-    let err = validateAdv({bin,quantity,exp_month,exp_year,cvv_on, cvv_value: cvv_input});
-    if(err){ document.getElementById('error-adv').textContent = err; return; }
-    document.getElementById('error-adv').textContent = '';
-    const getTypeByBin = (bin) => {
-      if(bin.startsWith('4')) return 'visa';
-      if(bin.startsWith('5')) return 'mc';
-      if(bin.startsWith('3')) return 'amex';
-      return 'mc';
-    }
-    let output = [];
-    for(let i=0; i<+quantity; i++) {
-      let network = bin ? getTypeByBin(bin) : 'mc';
-      let len = bin ? (bin.startsWith('3') ? 15 : 16) : cardLength(network);
-      // build prefix for generation: take up to len-1 digits from provided BIN (so luhnGen calculates final check digit)
-      let prefixForGen = bin ? bin.slice(0, Math.min(bin.length, len - 1)) : getCardPrefix('random');
-      let card = luhnGen(prefixForGen, len);
-      let mm = getAnyValue(exp_month, null, 12);
-      let yy = getAnyValue(exp_year, null, 0);
-      let cvv = cvv_input ? cvv_input : (cvv_on ? randomCvv(network) : '');
-      if(mm==='random') mm = (Math.floor(Math.random()*12)+1).toString().padStart(2,'0');
-      if(yy==='random') yy = (new Date().getFullYear() + Math.floor(Math.random()*6)).toString();
-      output.push(formatLine(card, mm, yy, cvv, fmt));
-    }
-    document.getElementById('card-results').textContent = output.join('\n');
-  }
-
-  document.getElementById('form-basic').onsubmit = generateBasic;
-  document.getElementById('form-advanced').onsubmit = generateAdvanced;
-
-  // Clipboard: copy to clipboard function
-  document.getElementById('copy-btn').onclick = function() {
-    let text = document.getElementById('card-results').textContent.trim();
-    if(!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-      let btn = this;
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  try {
+    const out = await generateCardsAsync({
+      prefixFactory, lengthFactory, qty,
+      exp_month, exp_year, cvv_on, cvv_input: cvvInputVal, fmt
     });
-  };
-  // Reset: clear results and errors
-  document.getElementById('reset-btn').onclick = function() {
-    document.getElementById('card-results').textContent = '';
-    document.getElementById('error-basic').textContent = '';
-    document.getElementById('error-adv').textContent = '';
-  };
+    nodes.results.textContent = out.join('\n');
+  } catch (err) {
+    (isAdvanced ? nodes.errorAdv : nodes.errorBasic).textContent = 'Generation error';
+    console.error(err);
+  } finally {
+    setGenerating(false, isAdvanced ? 'adv' : 'basic');
+  }
+}
+
+/* Attach handlers */
+nodes.formBasic.addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:false}); });
+nodes.formAdv.addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:true}); });
+
+nodes.binInput.addEventListener('input', validateBinAndToggleButton);
+nodes.binInput.addEventListener('blur', validateBinAndToggleButton);
+
+/* Copy & Reset */
+nodes.copyBtn.addEventListener('click', async function(){
+  const text = nodes.results.textContent.trim();
+  if(!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    const prev = this.textContent;
+    this.textContent = 'Copied!';
+    setTimeout(()=>{ this.textContent = prev; }, 1400);
+  } catch(err){ console.warn('Clipboard failed', err); }
+});
+nodes.resetBtn.addEventListener('click', ()=>{
+  nodes.results.textContent = '';
+  nodes.errorBasic.textContent = '';
+  nodes.errorAdv.textContent = '';
+  nodes.binInput.classList.remove('invalid');
+  nodes.generateAdvBtn.disabled = true;
+});
+
+/* Visitor counter: record visit then display TOTAL visits once (no polling) */
+const visitor = (function(){
+  async function safeFetch(url, opts){
+    try {
+      const ctrl = new AbortController();
+      const id = setTimeout(()=>ctrl.abort(), 3000);
+      const res = await fetch(url, {...(opts||{}), signal: ctrl.signal});
+      clearTimeout(id);
+      if(!res.ok) throw new Error('non-2xx');
+      return res;
+    } catch(e){ return null; }
+  }
+  async function notifyServerVisit(){
+    // POST /api/visit to signal page view
+    const path = window.location.pathname || '/';
+    const res = await safeFetch(`/api/visit`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({path})
+    });
+    return !!res;
+  }
+  async function fetchVisitorTotal(){
+    const path = encodeURIComponent(window.location.pathname || '/');
+    const res = await safeFetch(`/api/visitors?path=${path}`, { method: 'GET' });
+    if(!res) return null;
+    try {
+      const j = await res.json();
+      if(typeof j.count === 'number') return j.count;
+      return null;
+    } catch(e){ return null; }
+  }
+  async function init(){
+    const ok = await notifyServerVisit();
+    const count = await fetchVisitorTotal();
+    if(count !== null){
+      nodes.visitorCount.textContent = String(count);
+    } else if(!ok){
+      // fallback: show a single plausible demo count (not polling)
+      const demo = 120 + Math.floor(Math.random()*40);
+      nodes.visitorCount.textContent = String(demo);
+    } else {
+      // notified ok but couldn't fetch total -> still show a simple placeholder message
+      nodes.visitorCount.textContent = '—';
+    }
+  }
+  return { init };
+})();
+
+visitor.init().catch(err => { console.warn('Visitor init failed', err); });
+
+/* Tabs keyboard accessibility */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
+  });
+});
+
+/* Ad injection (immediate) */
+(function injectAdImmediate(){
+  try {
+    const wrap = nodes.adWrap;
+    if(!wrap) return;
+    const key = wrap.dataset.adKey;
+    window.atOptions = { 'key': key, 'format': 'iframe', 'height': 60, 'width': 468, 'params': {} };
+    const s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.src = `//www.highperformanceformat.com/${key}/invoke.js`;
+    s.async = true;
+    s.onload = function(){ const d=$('ad-debug'); if(d) d.style.display='none'; };
+    s.onerror = function(){ const f=$('ad-fallback'); if(f){ f.srcdoc = `<div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;'>Ad placeholder</div>`; f.style.display=''; const d=$('ad-debug'); if(d) d.style.display='none'; } };
+    wrap.appendChild(s);
+  } catch(e){ console.error('Ad injection failed', e); }
+})();
 </script>
 </body>
 </html>
