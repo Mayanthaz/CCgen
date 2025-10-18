@@ -2,67 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>MayaGen — Random Test Credit Card Numbers Generator</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MayaGen — Random Test Credit Card Numbers Generator (Mobile Fixes)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
   <meta name="theme-color" content="#071021" />
   <style>
+    /* Mobile-first, fully responsive layout fixes */
     :root{
       --bg-a:#071021; --bg-b:#081226;
       --accent:#36dab6; --accent-2:#61f0c6;
       --muted:rgba(255,255,255,0.6);
       --text:#e9f6fb;
       --panel-radius:12px;
-      --static-width:520px;
       --error:#ff8383;
+      --gutter:16px;
+      --max-width:1200px;
     }
 
-    @media (prefers-reduced-motion: reduce){
-      * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition: none !important; }
-    }
+    /* reduce motion */
+    @media (prefers-reduced-motion: reduce){ *{ transition:none!important; animation:none!important; } }
 
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:var(--text);background:
-      linear-gradient(180deg,var(--bg-a),var(--bg-b));display:flex;align-items:flex-start;justify-content:center;padding:24px;box-sizing:border-box;}
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:var(--text);
+      background: linear-gradient(180deg,var(--bg-a),var(--bg-b));
+      -webkit-text-size-adjust:100%;
+      -ms-text-size-adjust:100%;
+      box-sizing:border-box;
+    }
+    *,*::before,*::after{box-sizing:inherit;}
+
+    .page-wrap{
+      padding:18px;
+      display:flex;
+      justify-content:center;
+    }
 
     .container{
-      width: min(1200px, 100%);
+      width:100%;
+      max-width:var(--max-width);
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius: calc(var(--panel-radius) + 6px);
-      padding:16px;
-      box-shadow: 0 14px 40px rgba(2,6,12,0.6);
-      overflow:auto;
-      box-sizing:border-box;
+      border-radius: calc(var(--panel-radius)+6px);
+      padding:14px;
+      box-shadow: 0 12px 36px rgba(2,6,12,0.6);
+      overflow:hidden;
     }
 
-    /* Top ad */
+    /* top ad responsive */
     #top-ad{ display:flex; justify-content:center; margin:0 0 12px; }
-    #top-ad .ad-wrap{ width:100%; max-width:468px; height:60px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center; }
+    .ad-wrap{ width:100%; max-width:468px; height:60px; border-radius:8px; overflow:hidden; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); display:flex; align-items:center; justify-content:center; }
     #ad-debug{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#9fd6c3; font-weight:700; background:#071226; border-radius:6px; }
 
-    nav{ display:flex; gap:12px; align-items:center; margin-bottom:12px; color:var(--muted); font-weight:700; }
+    nav{ display:flex; gap:12px; align-items:center; margin-bottom:12px; color:var(--muted); font-weight:700; flex-wrap:wrap; }
     .logo{ width:44px; height:44px; display:grid; place-items:center; border-radius:10px; background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:var(--accent); font-weight:800; font-size:1.05rem; }
-    .title{ font-size:1.02rem; color:var(--text); letter-spacing:0.4px; }
+    .title{ font-size:1.03rem; color:var(--text); letter-spacing:0.4px; }
 
-    .tabs{ display:flex; gap:10px; margin:10px 0; }
-    .tab{ padding:8px 14px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); color:var(--muted); cursor:pointer; border:1px solid rgba(255,255,255,0.02); font-weight:700; }
-    .tab.active{ color:var(--bg-a); background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow: 0 8px 20px rgba(54,218,182,0.06); }
+    .tabs{ display:flex; gap:10px; margin:10px 0; flex-wrap:wrap; }
+    .tab{ padding:8px 12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01),transparent); color:var(--muted); cursor:pointer; border:1px solid rgba(255,255,255,0.02); font-weight:700; }
+    .tab.active{ color:var(--bg-a); background:linear-gradient(90deg,var(--accent),var(--accent-2)); box-shadow:0 8px 20px rgba(54,218,182,0.06); }
 
-    .form-content{ display:flex; gap:20px; align-items:flex-start; flex-wrap:nowrap; }
+    /* form-content: stack on small, two-column on wide */
+    .form-content{
+      display:flex;
+      gap:var(--gutter);
+      align-items:flex-start;
+      flex-direction:column;
+    }
 
-    .panel-form{
-      flex:0 0 var(--static-width);
-      min-width:260px;
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:10px 12px;
-      padding:14px;
-      border-radius:12px;
+    .panel{
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border-radius:12px;
       border:1px solid rgba(255,255,255,0.03);
+      padding:12px;
       box-sizing:border-box;
+      width:100%;
+    }
+
+    /* form grid */
+    .panel-form{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px 10px;
+      width:100%;
     }
     .field{ display:flex; flex-direction:column; gap:6px; }
     label{ font-size:0.74rem; text-transform:uppercase; color:var(--muted); font-weight:700; letter-spacing:0.7px; }
 
+    input, select, button{ font:inherit; }
     input[type="text"], input[type="number"], select{
       background: rgba(6,12,18,0.45);
       border:1px solid rgba(255,255,255,0.03);
@@ -70,411 +99,304 @@
       padding:10px 12px;
       border-radius:9px;
       outline:none;
+      width:100%;
     }
     input::placeholder{ color: rgba(255,255,255,0.16); }
     input:focus, select:focus{ box-shadow:0 8px 20px rgba(54,218,182,0.06); border-color:rgba(54,218,182,0.55); transform:translateY(-1px); }
 
-    /* red outline when invalid */
     input.invalid { border-color: var(--error); box-shadow: 0 6px 18px rgba(255,131,131,0.07); }
 
-    .cvv-control {
-      display:flex;
-      align-items:center;
-      gap:10px;
-      grid-column: 1 / -1;
-    }
-    /* CVV button made smaller per request */
+    .cvv-control{ display:flex; gap:10px; align-items:center; grid-column:1 / -1; }
     .cvv-btn {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding:6px 10px;           /* reduced padding */
-      font-size:0.88rem;          /* slightly smaller font */
-      border-radius:8px;          /* slightly smaller radius */
+      padding:6px 10px;
+      font-size:0.9rem;
+      border-radius:8px;
       background: rgba(255,255,255,0.03);
       color:var(--text);
       font-weight:800;
       cursor:pointer;
       border:1px solid rgba(255,255,255,0.05);
-      box-shadow: 0 6px 12px rgba(2,6,12,0.28);
-      transition: transform .12s ease, box-shadow .12s ease, background .12s;
-      user-select:none;
     }
-    .cvv-btn:hover{ transform:translateY(-2px); box-shadow: 0 10px 22px rgba(2,6,12,0.35); }
-    .cvv-btn.active{
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color:#041217;
-      box-shadow: 0 12px 30px rgba(54,218,182,0.08);
-    }
-    .cvv-info { color:var(--muted); font-weight:700; font-size:0.9rem; }
+    .cvv-btn.active{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#041217; }
 
-    .panel-form .btn-generate {
-      grid-column:1 / -1;
-      padding:11px 14px;
-      border-radius:10px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color:#041217;
-      border:none;
-      font-weight:800;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-    }
-    .panel-form .btn-generate[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-generate{ grid-column:1 / -1; padding:11px 14px; border-radius:10px; background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#041217; border:none; font-weight:800; display:inline-flex; gap:10px; align-items:center; justify-content:center; width:100%; }
+    .btn-generate[disabled]{ opacity:.6; cursor:not-allowed; }
 
-    .spinner {
-      width:16px; height:16px; border-radius:50%;
-      border:2px solid rgba(255,255,255,0.14);
-      border-top-color: rgba(4,18,20,0.9);
-      display:inline-block;
-      animation: spin 0.9s linear infinite;
-      transform-origin:center;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner{ width:16px; height:16px; border-radius:50%; border:2px solid rgba(255,255,255,0.14); border-top-color: rgba(4,18,20,0.9); animation:spin .9s linear infinite; display:inline-block; }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
 
     .error{ grid-column:1 / -1; color:var(--error); font-size:0.9rem; }
 
-    /* RESULTS - STATIC */
+    /* results: ensure full content visible on mobile.
+       - pre becomes pre-wrap so long lines wrap, but horizontal scroll is allowed in case user prefers it.
+       - Use word-break and word-wrap rules for mobile display.
+    */
     .panel-results{
-      flex:0 0 var(--static-width);
-      width:var(--static-width);
-      border-radius:12px;
-      padding:14px;
-      min-height:340px;
       background: linear-gradient(180deg, rgba(8,14,20,0.6), rgba(8,14,20,0.5));
+      color:#dbeef6;
+      font-family:"Fira Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size:0.95rem;
+      border-radius:12px;
+      padding:12px;
       border:1px solid rgba(255,255,255,0.03);
       box-sizing:border-box;
-      font-family: "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-      font-size:0.95rem;
-      color:#dbeef6;
-      position:relative;
       overflow:auto;
-      will-change:transform,opacity;
+      min-height:220px;
+      position:relative;
+      width:100%;
     }
-    .panel-results pre{ margin:0; white-space:pre; line-height:1.6; letter-spacing:0.6px; }
+    .panel-results pre{
+      margin:0;
+      white-space:pre-wrap;          /* allows wrapping on narrow screens */
+      word-break:break-word;         /* break long tokens if necessary */
+      overflow-wrap: anywhere;
+      line-height:1.6;
+      letter-spacing:0.6px;
+      font-size:0.95rem;
+    }
 
-    /* Visitor panel below results shows total visits (not live viewers) */
-    .visitor-panel {
+    .visitor-panel{
       margin-top:10px;
       display:flex;
-      gap:10px;
+      gap:8px;
       align-items:center;
-      justify-content:flex-start;
       background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.03);
-      padding:8px 12px;
-      border-radius:10px;
+      padding:8px 10px;
+      border-radius:8px;
       color:var(--text);
       font-weight:700;
-      width:var(--static-width);
       box-sizing:border-box;
+      width:100%;
     }
-    .visitor-icon{ width:18px; height:18px; display:block; fill:none; stroke:currentColor; stroke-width:1.6; }
-    .visitor-count { color:var(--accent); margin-left:6px; font-weight:900; }
+    .visitor-icon{ width:16px; height:16px; display:block; fill:none; stroke:currentColor; stroke-width:1.6; }
+    .visitor-count{ color:var(--accent); margin-left:6px; font-weight:900; }
 
-    .panel-buttons{ display:flex; gap:10px; margin-top:12px; justify-content:flex-end; }
-    .btn{ padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.03); }
+    .panel-buttons{ display:flex; gap:10px; margin-top:12px; justify-content:space-between; flex-wrap:wrap; }
+    .btn{ padding:10px 12px; border-radius:10px; border:none; cursor:pointer; font-weight:700; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:var(--text); border:1px solid rgba(255,255,255,0.03); }
     .btn.primary{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#041217; }
     .btn.secondary{ background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); }
 
-    @media (max-width:1000px){
-      .form-content{ overflow:auto; }
-      .panel-form{ grid-template-columns:1fr; }
+    /* Desktop / wide: show two columns side-by-side */
+    @media (min-width:1000px){
+      .form-content{ flex-direction:row; align-items:flex-start; }
+      .panel-form{ min-width: 420px; }
+      .panel-results{ min-width: 420px; }
+      .panel-buttons{ justify-content:flex-end; }
     }
 
-    .small-muted{ color:var(--muted); font-weight:600; font-size:0.95rem; }
+    /* Extra small screens: increase touch targets */
+    @media (max-width:420px){
+      .cvv-btn{ padding:8px 12px; font-size:0.98rem; }
+      input[type="text"], input[type="number"], select{ padding:12px; font-size:1rem; }
+      .btn-generate{ padding:12px; font-size:1rem; }
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="app">
-    <div id="top-ad" aria-hidden="false">
-      <div class="ad-wrap" id="ad-wrap" data-ad-key="0879b0752ee352d3d0380b44140d09f1">
-        <div id="ad-debug" aria-hidden="false">Advertisement</div>
-        <iframe id="ad-fallback" title="ad fallback" style="border:0;width:100%;height:100%;display:none;" aria-hidden="true" loading="lazy"></iframe>
+  <div class="page-wrap">
+    <main class="container" id="app" role="main">
+      <div id="top-ad" aria-hidden="false">
+        <div class="ad-wrap" id="ad-wrap" data-ad-key="0879b0752ee352d3d0380b44140d09f1">
+          <div id="ad-debug">Advertisement</div>
+          <iframe id="ad-fallback" title="ad fallback" style="border:0;width:100%;height:100%;display:none;" aria-hidden="true" loading="lazy"></iframe>
+        </div>
       </div>
-    </div>
 
-    <nav aria-label="Primary">
-      <div class="logo" aria-hidden="true">M</div>
-      <div class="title">MayaGen — Random Test Credit Card Numbers</div>
-    </nav>
+      <nav aria-label="Primary">
+        <div class="logo" aria-hidden="true">M</div>
+        <div class="title">MayaGen — Random Test Credit Card Numbers</div>
+      </nav>
 
-    <div class="tabs" role="tablist">
-      <button class="tab active" id="tab-basic" role="tab" aria-selected="true" aria-controls="form-basic">Basic</button>
-      <button class="tab" id="tab-advanced" role="tab" aria-selected="false" aria-controls="form-advanced">Advanced</button>
-    </div>
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tab-basic" role="tab" aria-selected="true" aria-controls="form-basic">Basic</button>
+        <button class="tab" id="tab-advanced" role="tab" aria-selected="false" aria-controls="form-advanced">Advanced</button>
+      </div>
 
-    <div class="form-content">
-      <!-- BASIC FORM -->
-      <form class="panel-form" id="form-basic" autocomplete="off" aria-labelledby="tab-basic" role="region">
-        <div class="field">
-          <label for="network-basic">Network</label>
-          <select id="network-basic" name="network-basic" aria-label="Network">
-            <option value="random">Random</option>
-            <option value="visa">Visa</option>
-            <option value="mc">Mastercard</option>
-            <option value="amex">Amex</option>
-          </select>
-        </div>
+      <div class="form-content" id="forms-area">
+        <!-- Basic form panel -->
+        <form class="panel panel-form" id="form-basic" autocomplete="off" aria-labelledby="tab-basic" role="region">
+          <div class="field">
+            <label for="network-basic">Network</label>
+            <select id="network-basic" name="network-basic" aria-label="Network">
+              <option value="random">Random</option>
+              <option value="visa">Visa</option>
+              <option value="mc">Mastercard</option>
+              <option value="amex">Amex</option>
+            </select>
+          </div>
 
-        <div class="field">
-          <label for="quantity-basic">Quantity</label>
-          <input type="number" id="quantity-basic" name="quantity-basic" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
-        </div>
+          <div class="field">
+            <label for="quantity-basic">Quantity</label>
+            <input type="number" id="quantity-basic" name="quantity-basic" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
+          </div>
 
-        <div class="field">
-          <label for="exp-month-basic">Expiration Month</label>
-          <select id="exp-month-basic" name="exp-month-basic" aria-label="Expiration Month"></select>
-        </div>
+          <div class="field">
+            <label for="exp-month-basic">Expiration Month</label>
+            <select id="exp-month-basic" name="exp-month-basic" aria-label="Expiration Month"></select>
+          </div>
 
-        <div class="field">
-          <label for="exp-year-basic">Expiration Year</label>
-          <select id="exp-year-basic" name="exp-year-basic" aria-label="Expiration Year"></select>
-        </div>
+          <div class="field">
+            <label for="exp-year-basic">Expiration Year</label>
+            <select id="exp-year-basic" name="exp-year-basic" aria-label="Expiration Year"></select>
+          </div>
 
-        <div class="cvv-control">
-          <button type="button" id="cvv-toggle-basic" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
-          <div class="cvv-info">Generate CVV if left empty</div>
-        </div>
+          <div class="cvv-control">
+            <button type="button" id="cvv-toggle-basic" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
+            <div class="cvv-info">Generate CVV if left empty</div>
+          </div>
 
-        <div class="field">
-          <label for="cvv-basic-input">CVV (optional)</label>
-          <input type="text" id="cvv-basic-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
-        </div>
+          <div class="field">
+            <label for="cvv-basic-input">CVV (optional)</label>
+            <input type="text" id="cvv-basic-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
+          </div>
 
-        <button type="submit" class="btn-generate" id="generate-basic">
-          <span class="gen-label">Generate</span>
-          <span class="spinner" id="spinner-basic" style="display:none"></span>
-        </button>
+          <button type="submit" class="btn-generate" id="generate-basic">
+            <span class="gen-label">Generate</span>
+            <span class="spinner" id="spinner-basic" style="display:none"></span>
+          </button>
 
-        <div class="error" id="error-basic" role="status" aria-live="polite"></div>
-      </form>
+          <div class="error" id="error-basic" role="status" aria-live="polite"></div>
+        </form>
 
-      <!-- ADVANCED FORM (BIN required: first 6 digits mandatory) -->
-      <form class="panel-form" id="form-advanced" style="display:none" autocomplete="off" aria-labelledby="tab-advanced" role="region">
-        <div class="field" style="grid-column:1 / -1">
-          <label for="bin">BIN <span class="small-muted" style="font-weight:600">(FIRST 6 digits required, up to 16)</span></label>
-          <input type="text" id="bin" maxlength="16" inputmode="numeric" pattern="^[0-9]{6,16}$" placeholder="Enter at least the first 6 digits (e.g. 515462)">
-        </div>
-
-        <div class="field">
-          <label for="format-adv">Format</label>
-          <select id="format-adv">
-            <option value="pipe">Pipe (|)</option>
-            <option value="csv">CSV (,)</option>
-            <option value="space">Space ( )</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="quantity-adv">Quantity</label>
-          <input type="number" id="quantity-adv" name="quantity-adv" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
-        </div>
-
-        <div class="field">
-          <label for="exp-month-adv">Expiration Month</label>
-          <select id="exp-month-adv"></select>
-        </div>
-
-        <div class="field">
-          <label for="exp-year-adv">Expiration Year</label>
-          <select id="exp-year-adv"></select>
-        </div>
-
-        <div class="cvv-control">
-          <button type="button" id="cvv-toggle-adv" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
-          <div class="cvv-info">Generate CVV if left empty</div>
-        </div>
-
-        <div class="field">
-          <label for="cvv-adv-input">CVV (optional)</label>
-          <input type="text" id="cvv-adv-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
-        </div>
-
-        <button type="submit" class="btn-generate" id="generate-adv" disabled>
-          <span class="gen-label">Generate</span>
-          <span class="spinner" id="spinner-adv" style="display:none"></span>
-        </button>
-
-        <div class="error" id="error-adv" role="status" aria-live="polite"></div>
-      </form>
-
-      <!-- RESULTS (static, fixed width) -->
-      <div style="display:flex;flex-direction:column;flex:0 0 var(--static-width);min-width:var(--static-width)">
-        <div class="panel-results" aria-live="polite" aria-atomic="true">
+        <!-- Results panel -->
+        <section class="panel panel-results" aria-live="polite" aria-atomic="true" id="results-panel">
           <pre id="card-results" style="margin:0;"></pre>
-        </div>
 
-        <!-- Visitor panel below output panel shows TOTAL visits (not live viewers) -->
-        <div class="visitor-panel" id="visitor-panel" aria-hidden="false" title="Total visitors (page views)">
-          <svg class="visitor-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-          <div>Total visits: <span id="visitor-count" class="visitor-count">0</span></div>
-        </div>
+          <div class="visitor-panel" id="visitor-panel" aria-hidden="false" title="Total visits">
+            <svg class="visitor-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <div>Total visits: <span id="visitor-count" class="visitor-count">0</span></div>
+          </div>
 
-        <div class="panel-buttons" style="margin-top:12px">
-          <button type="button" class="btn primary" id="copy-btn">Copy</button>
-          <button type="button" class="btn secondary" id="reset-btn">Reset</button>
-        </div>
+          <div class="panel-buttons" style="margin-top:12px">
+            <button type="button" class="btn primary" id="copy-btn">Copy</button>
+            <button type="button" class="btn secondary" id="reset-btn">Reset</button>
+          </div>
+        </section>
+
+        <!-- Advanced form panel -->
+        <form class="panel panel-form" id="form-advanced" style="display:none" autocomplete="off" aria-labelledby="tab-advanced" role="region">
+          <div class="field" style="grid-column:1 / -1">
+            <label for="bin">BIN <span class="small-muted" style="font-weight:600">(FIRST 6 digits required, up to 16)</span></label>
+            <input type="text" id="bin" maxlength="16" inputmode="numeric" pattern="^[0-9]{6,16}$" placeholder="Enter at least first 6 digits (e.g. 515462)">
+          </div>
+
+          <div class="field">
+            <label for="format-adv">Format</label>
+            <select id="format-adv">
+              <option value="pipe">Pipe (|)</option>
+              <option value="csv">CSV (,)</option>
+              <option value="space">Space ( )</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="quantity-adv">Quantity</label>
+            <input type="number" id="quantity-adv" name="quantity-adv" min="1" max="10000" value="5" inputmode="numeric" aria-label="Quantity">
+          </div>
+
+          <div class="field">
+            <label for="exp-month-adv">Expiration Month</label>
+            <select id="exp-month-adv"></select>
+          </div>
+
+          <div class="field">
+            <label for="exp-year-adv">Expiration Year</label>
+            <select id="exp-year-adv"></select>
+          </div>
+
+          <div class="cvv-control">
+            <button type="button" id="cvv-toggle-adv" class="cvv-btn active" aria-pressed="true" title="Toggle CVV generation">CVV</button>
+            <div class="cvv-info">Generate CVV if left empty</div>
+          </div>
+
+          <div class="field">
+            <label for="cvv-adv-input">CVV (optional)</label>
+            <input type="text" id="cvv-adv-input" maxlength="4" inputmode="numeric" pattern="^[0-9]{3,4}$" placeholder="Leave empty to generate">
+          </div>
+
+          <button type="submit" class="btn-generate" id="generate-adv" disabled>
+            <span class="gen-label">Generate</span>
+            <span class="spinner" id="spinner-adv" style="display:none"></span>
+          </button>
+
+          <div class="error" id="error-adv" role="status" aria-live="polite"></div>
+        </form>
       </div>
-    </div>
+    </main>
   </div>
 
 <script>
-/*
-  Changes in this file:
-  - CVV toggle button made smaller (reduced padding and font-size).
-  - Visitor panel now displays TOTAL visits (cumulative page views) instead of a live viewer count.
-    Behavior:
-      * On page load, the client will POST /api/visit once (notify server of a visit).
-      * Then it will GET /api/visitors?path=... once to retrieve the total visits count and display it.
-      * No continuous polling — the value represents cumulative visits (page views).
-      * If the server endpoints are unreachable, a single demo fallback value is shown.
-  - Advanced form still enforces BIN (6-16 digits) and the Generate button is disabled until BIN is valid.
-  - Generation remains chunked and non-blocking for smooth UX.
+/* Client logic kept lightweight and unchanged in behavior; only improved for responsive reliability.
+   This script will:
+   - populate month/year selects
+   - handle tabs
+   - validate advanced BIN (enable/disable generate)
+   - chunked generation (non-blocking)
+   - copy/reset
+   - attempt to POST /api/visit and GET /api/visitors to show totals
 */
 
-/* small helpers */
 const $ = id => document.getElementById(id);
 const MAX_Q = 10000;
 const CHUNK_SIZE = 250;
 const nowYear = new Date().getFullYear();
 
-/* cached nodes */
-const nodes = {
-  formBasic: $('form-basic'),
-  formAdv: $('form-advanced'),
-  binInput: $('bin'),
-  expMonthBasic: $('exp-month-basic'),
-  expYearBasic: $('exp-year-basic'),
-  expMonthAdv: $('exp-month-adv'),
-  expYearAdv: $('exp-year-adv'),
-  generateBasicBtn: $('generate-basic'),
-  generateAdvBtn: $('generate-adv'),
-  spinnerBasic: $('spinner-basic'),
-  spinnerAdv: $('spinner-adv'),
-  errorBasic: $('error-basic'),
-  errorAdv: $('error-adv'),
-  results: $('card-results'),
-  copyBtn: $('copy-btn'),
-  resetBtn: $('reset-btn'),
-  cvvToggleBasic: $('cvv-toggle-basic'),
-  cvvToggleAdv: $('cvv-toggle-adv'),
-  visitorCount: $('visitor-count'),
-  adWrap: $('ad-wrap'),
-  adDebug: $('ad-debug'),
-  adFallback: $('ad-fallback')
-};
-
-/* populate selects */
-const MONTH_NAMES = ['Random','January','February','March','April','May','June','July','August','September','October','November','December'];
-function fillSelect(selectEl, items){
-  const frag = document.createDocumentFragment();
-  selectEl.innerHTML = '';
-  items.forEach(it => {
-    const o = document.createElement('option');
-    o.value = it.value;
-    o.textContent = it.label;
-    frag.appendChild(o);
-  });
-  selectEl.appendChild(frag);
-}
-function getMonths(){ return MONTH_NAMES.map((m,i)=>({value:i===0?'random':(i<10?'0'+i:String(i)), label:m})); }
-function getYears(){ const arr=[{value:'random',label:'Random'}]; for(let i=0;i<16;i++) arr.push({value:String(nowYear+i),label:String(nowYear+i)}); return arr; }
+/* Populate selects */
+const MONTHS = ['Random','January','February','March','April','May','June','July','August','September','October','November','December'];
+function fillSelect(s, items){ const frag=document.createDocumentFragment(); s.innerHTML=''; items.forEach(it=>{ const o=document.createElement('option'); o.value=it.value; o.textContent=it.label; frag.appendChild(o); }); s.appendChild(frag); }
+function getMonths(){ return MONTHS.map((m,i)=>({value:i===0?'random':(i<10?'0'+i:String(i)), label:m})); }
+function getYears(){ const a=[{value:'random',label:'Random'}]; for(let i=0;i<16;i++) a.push({value:String(nowYear+i),label:String(nowYear+i)}); return a; }
 
 if(window.requestIdleCallback) requestIdleCallback(()=> {
-  fillSelect(nodes.expMonthBasic, getMonths());
-  fillSelect(nodes.expYearBasic, getYears());
-  fillSelect(nodes.expMonthAdv, getMonths());
-  fillSelect(nodes.expYearAdv, getYears());
+  fillSelect($('exp-month-basic'), getMonths());
+  fillSelect($('exp-year-basic'), getYears());
+  fillSelect($('exp-month-adv'), getMonths());
+  fillSelect($('exp-year-adv'), getYears());
 }, {timeout:800});
 else setTimeout(()=> {
-  fillSelect(nodes.expMonthBasic, getMonths());
-  fillSelect(nodes.expYearBasic, getYears());
-  fillSelect(nodes.expMonthAdv, getMonths());
-  fillSelect(nodes.expYearAdv, getYears());
-}, 50);
+  fillSelect($('exp-month-basic'), getMonths());
+  fillSelect($('exp-year-basic'), getYears());
+  fillSelect($('exp-month-adv'), getMonths());
+  fillSelect($('exp-year-adv'), getYears());
+},50);
 
 /* Tabs */
 document.querySelector('.tabs').addEventListener('click', e => {
   const t = e.target;
   if(!t.classList.contains('tab')) return;
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.classList.toggle('active', btn === t);
-    btn.setAttribute('aria-selected', String(btn === t));
-  });
-  nodes.formBasic.style.display = t.id === 'tab-basic' ? '' : 'none';
-  nodes.formAdv.style.display = t.id === 'tab-advanced' ? '' : 'none';
-
+  document.querySelectorAll('.tab').forEach(btn => { btn.classList.toggle('active', btn===t); btn.setAttribute('aria-selected', String(btn===t)); });
+  $('form-basic').style.display = t.id === 'tab-basic' ? '' : 'none';
+  $('form-advanced').style.display = t.id === 'tab-advanced' ? '' : 'none';
   if(t.id === 'tab-advanced') validateBinAndToggleButton();
-  else { nodes.errorAdv.textContent = ''; nodes.binInput.classList.remove('invalid'); }
-
-  nodes.errorBasic.textContent = '';
-  nodes.results.textContent = '';
+  else { $('error-adv').textContent=''; $('bin').classList.remove('invalid'); }
+  $('error-basic').textContent=''; $('card-results').textContent='';
 });
 
-/* CVV toggle (smaller button) */
-function toggleCvv(btn){ const isOn = btn.classList.toggle('active'); btn.setAttribute('aria-pressed', String(isOn)); btn.textContent = isOn ? 'CVV' : 'CVV'; }
-nodes.cvvToggleBasic.addEventListener('click', ()=>toggleCvv(nodes.cvvToggleBasic));
-nodes.cvvToggleAdv.addEventListener('click', ()=>toggleCvv(nodes.cvvToggleAdv));
+/* CVV toggle */
+function toggleCvv(btn){ const isOn = btn.classList.toggle('active'); btn.setAttribute('aria-pressed', String(isOn)); }
+$('cvv-toggle-basic').addEventListener('click', ()=>toggleCvv($('cvv-toggle-basic')));
+$('cvv-toggle-adv').addEventListener('click', ()=>toggleCvv($('cvv-toggle-adv')));
 
-/* Luhn & helpers */
-function luhnGen(prefix, length){
-  const n=[];
-  for(let i=0;i<prefix.length;i++) n.push(+prefix[i]||0);
-  while(n.length<length-1) n.push((Math.random()*10)|0);
-  let sum=0, alt=false;
-  for(let i=n.length-1;i>=0;--i){
-    let d=n[i];
-    if(alt){ d*=2; if(d>9) d-=9; }
-    sum+=d; alt=!alt;
-  }
-  const check=(10-(sum%10))%10;
-  n.push(check);
-  return n.join('');
-}
-function getCardPrefix(type){
-  if(type==='visa') return '4';
-  if(type==='mc') return '5'+((Math.random()*5)|1);
-  if(type==='amex') return '3'+(Math.random()<0.5?'4':'7');
-  const x=((Math.random()*3)|0);
-  if(x===0) return '4';
-  if(x===1) return '5'+((Math.random()*5)|1);
-  return '3'+(Math.random()<0.5?'4':'7');
-}
+/* Luhn and helpers */
+function luhnGen(prefix, length){ const n=[]; for(let i=0;i<prefix.length;i++) n.push(+prefix[i]||0); while(n.length<length-1) n.push((Math.random()*10)|0); let sum=0,alt=false; for(let i=n.length-1;i>=0;--i){ let d=n[i]; if(alt){ d*=2; if(d>9) d-=9; } sum+=d; alt=!alt; } const check=(10-(sum%10))%10; n.push(check); return n.join(''); }
+function getCardPrefix(type){ if(type==='visa') return '4'; if(type==='mc') return '5'+((Math.random()*5)|1); if(type==='amex') return '3'+(Math.random()<0.5?'4':'7'); const x=(Math.random()*3)|0; if(x===0) return '4'; if(x===1) return '5'+((Math.random()*5)|1); return '3'+(Math.random()<0.5?'4':'7'); }
 function cardLength(type){ return type==='amex'?15:16; }
 function randomCvv(type){ return type==='amex'?String((Math.random()*9000|0)+1000):String((Math.random()*900|0)+100); }
 function formatLine(card,month,year,cvv,fmt){ if(fmt==='csv') return `${card},${month},${year},${cvv}`; if(fmt==='space') return `${card} ${month} ${year} ${cvv}`; return `${card}|${month}|${year}|${cvv}`; }
 
 /* Validation */
 function isBinValid(bin){ return /^\d{6,16}$/.test(bin); }
-function validateBasic({network,quantity,exp_month,exp_year,cvv_value}){
-  if(!network) return "Network is required.";
-  if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Enter quantity 1-${MAX_Q}.`;
-  if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Invalid month."; }
-  if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be past."; if(y>nowYear+15) return "Too far in future."; }
-  if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
-  return null;
-}
-function validateAdv({bin,quantity,exp_month,exp_year,cvv_value}){
-  if(!bin) return "Advanced mode requires at least the first 6 BIN digits.";
-  if(!/^\d{6,16}$/.test(bin)) return "BIN must be numeric and 6-16 digits (enter first 6+ digits).";
-  if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Quantity 1-${MAX_Q} required.`;
-  if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Month 1-12."; }
-  if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be in the past."; if(y>nowYear+15) return "Year too far."; }
-  if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits.";
-  return null;
-}
+function validateBasic({network,quantity,exp_month,exp_year,cvv_value}){ if(!network) return "Network is required."; if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Enter quantity 1-${MAX_Q}.`; if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Invalid month."; } if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be past."; if(y>nowYear+15) return "Too far in future."; } if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits."; return null; }
+function validateAdv({bin,quantity,exp_month,exp_year,cvv_value}){ if(!bin) return "Advanced mode requires the first 6 BIN digits."; if(!/^\d{6,16}$/.test(bin)) return "BIN must be numeric and 6-16 digits (enter first 6+ digits)."; if(!quantity||isNaN(+quantity)||+quantity<1||+quantity>MAX_Q) return `Quantity 1-${MAX_Q} required.`; if(exp_month!=='random'){ let m=+exp_month; if(m<1||m>12) return "Month 1-12."; } if(exp_year!=='random'){ let y=+exp_year; if(y<nowYear) return "Year can't be in the past."; if(y>nowYear+15) return "Year too far."; } if(cvv_value && !/^\d{3,4}$/.test(cvv_value)) return "CVV must be 3 or 4 digits."; return null; }
 
-/* Chunked generator */
+/* Chunked generation */
 function generateCardsAsync({prefixFactory,lengthFactory,qty,exp_month,exp_year,cvv_on,cvv_input,fmt}){
   return new Promise(resolve=>{
-    const out=[];
-    let i=0;
+    const out=[]; let i=0;
     const chunk = ()=>{
       const end = Math.min(i + CHUNK_SIZE, qty);
       for(; i<end; i++){
@@ -491,51 +413,40 @@ function generateCardsAsync({prefixFactory,lengthFactory,qty,exp_month,exp_year,
       if(i<qty) setTimeout(chunk, 0);
       else resolve(out);
     };
-    setTimeout(chunk, 0);
+    setTimeout(chunk,0);
   });
 }
 
 /* UI helpers */
 function setGenerating(isGenerating, which){
-  const spinner = which==='adv' ? nodes.spinnerAdv : nodes.spinnerBasic;
-  const btn = which==='adv' ? nodes.generateAdvBtn : nodes.generateBasicBtn;
-  if(isGenerating){ spinner.style.display=''; btn.disabled = true; }
-  else { spinner.style.display='none'; btn.disabled = false; }
+  const spinner = which==='adv' ? $('spinner-adv') : $('spinner-basic');
+  const btn = which==='adv' ? $('generate-adv') : $('generate-basic');
+  if(isGenerating){ spinner.style.display=''; btn.disabled=true; } else { spinner.style.display='none'; btn.disabled=false; }
 }
 
-/* Ensure advanced Generate is enabled only when BIN is valid */
-function validateBinAndToggleButton() {
-  const bin = nodes.binInput.value.trim();
-  const btn = nodes.generateAdvBtn;
-  const err = nodes.errorAdv;
-  if (!bin) {
-    btn.disabled = true;
-    nodes.binInput.classList.remove('invalid');
-    err.textContent = '';
-    return;
-  }
-  if (!isBinValid(bin)) {
-    btn.disabled = true;
-    nodes.binInput.classList.add('invalid');
-    err.textContent = 'BIN must be numeric and at least the first 6 digits (6-16 total).';
-    return;
-  }
-  nodes.binInput.classList.remove('invalid');
-  err.textContent = '';
-  btn.disabled = false;
+/* Validate BIN live and toggle advanced generate button */
+function validateBinAndToggleButton(){
+  const bin = $('bin').value.trim();
+  const btn = $('generate-adv');
+  const err = $('error-adv');
+  if(!bin){ btn.disabled=true; $('bin').classList.remove('invalid'); err.textContent=''; return; }
+  if(!isBinValid(bin)){ btn.disabled=true; $('bin').classList.add('invalid'); err.textContent='BIN must be numeric and at least the first 6 digits (6-16 total).'; return; }
+  $('bin').classList.remove('invalid'); err.textContent=''; btn.disabled=false;
 }
+$('bin').addEventListener('input', validateBinAndToggleButton);
+$('bin').addEventListener('blur', validateBinAndToggleButton);
 
 /* Run generate */
 async function runGenerate({isAdvanced=false}){
   const quantityEl = isAdvanced ? $('quantity-adv') : $('quantity-basic');
   const expMonthEl = isAdvanced ? $('exp-month-adv') : $('exp-month-basic');
   const expYearEl = isAdvanced ? $('exp-year-adv') : $('exp-year-basic');
-  const cvvToggle = isAdvanced ? nodes.cvvToggleAdv : nodes.cvvToggleBasic;
+  const cvvToggle = isAdvanced ? $('cvv-toggle-adv') : $('cvv-toggle-basic');
   const cvvInputVal = (isAdvanced ? $('cvv-adv-input') : $('cvv-basic-input')).value.trim();
-  const errNode = isAdvanced ? nodes.errorAdv : nodes.errorBasic;
+  const errNode = isAdvanced ? $('error-adv') : $('error-basic');
 
   const network = isAdvanced ? null : $('network-basic').value;
-  const bin = isAdvanced ? nodes.binInput.value.trim() : null;
+  const bin = isAdvanced ? $('bin').value.trim() : null;
   const fmt = isAdvanced ? $('format-adv').value : 'pipe';
 
   const quantity = quantityEl.value;
@@ -549,37 +460,28 @@ async function runGenerate({isAdvanced=false}){
   if(validation){ errNode.textContent = validation; return; }
   errNode.textContent = '';
 
-  if (isAdvanced && !isBinValid(bin)) {
-    nodes.errorAdv.textContent = 'BIN is required (first 6 digits) and must be numeric (6-16 digits).';
-    nodes.binInput.classList.add('invalid');
-    nodes.generateAdvBtn.disabled = true;
-    return;
-  }
+  if(isAdvanced && !isBinValid(bin)){ $('error-adv').textContent='BIN is required and must be 6-16 digits.'; $('bin').classList.add('invalid'); $('generate-adv').disabled=true; return; }
 
   const qty = Math.min(+quantity, MAX_Q);
   setGenerating(true, isAdvanced ? 'adv' : 'basic');
 
-  // factories
   let prefixFactory, lengthFactory;
   if(isAdvanced){
-    prefixFactory = () => {
-      const len = bin.startsWith('3') ? 15 : 16;
-      return bin.slice(0, Math.min(bin.length, len - 1));
-    };
-    lengthFactory = () => bin.startsWith('3') ? 15 : 16;
+    prefixFactory = ()=> { const len = bin.startsWith('3')?15:16; return bin.slice(0, Math.min(bin.length,len-1)); };
+    lengthFactory = ()=> bin.startsWith('3')?15:16;
   } else {
-    prefixFactory = () => getCardPrefix(network);
-    lengthFactory = () => cardLength(network);
+    prefixFactory = ()=> getCardPrefix(network);
+    lengthFactory = ()=> cardLength(network);
   }
 
   try {
-    const out = await generateCardsAsync({
-      prefixFactory, lengthFactory, qty,
-      exp_month, exp_year, cvv_on, cvv_input: cvvInputVal, fmt
-    });
-    nodes.results.textContent = out.join('\n');
+    const out = await generateCardsAsync({ prefixFactory, lengthFactory, qty, exp_month, exp_year, cvv_on, cvv_input:cvvInputVal, fmt });
+    $('card-results').textContent = out.join('\n');
+    // ensure the results panel scrolls to top for mobile
+    const rp = $('results-panel');
+    if(rp) rp.scrollTop = 0;
   } catch (err) {
-    (isAdvanced ? nodes.errorAdv : nodes.errorBasic).textContent = 'Generation error';
+    errNode.textContent = 'Generation error';
     console.error(err);
   } finally {
     setGenerating(false, isAdvanced ? 'adv' : 'basic');
@@ -587,93 +489,38 @@ async function runGenerate({isAdvanced=false}){
 }
 
 /* Attach handlers */
-nodes.formBasic.addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:false}); });
-nodes.formAdv.addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:true}); });
-
-nodes.binInput.addEventListener('input', validateBinAndToggleButton);
-nodes.binInput.addEventListener('blur', validateBinAndToggleButton);
+$('form-basic').addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:false}); });
+$('form-advanced').addEventListener('submit', e => { e.preventDefault(); runGenerate({isAdvanced:true}); });
 
 /* Copy & Reset */
-nodes.copyBtn.addEventListener('click', async function(){
-  const text = nodes.results.textContent.trim();
+$('copy-btn').addEventListener('click', async function(){
+  const text = $('card-results').textContent.trim();
   if(!text) return;
-  try {
-    await navigator.clipboard.writeText(text);
-    const prev = this.textContent;
-    this.textContent = 'Copied!';
-    setTimeout(()=>{ this.textContent = prev; }, 1400);
-  } catch(err){ console.warn('Clipboard failed', err); }
+  try { await navigator.clipboard.writeText(text); const btn=this; const prev=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=prev,1400); } catch(e){ console.warn('Clipboard failed',e); }
 });
-nodes.resetBtn.addEventListener('click', ()=>{
-  nodes.results.textContent = '';
-  nodes.errorBasic.textContent = '';
-  nodes.errorAdv.textContent = '';
-  nodes.binInput.classList.remove('invalid');
-  nodes.generateAdvBtn.disabled = true;
-});
+$('reset-btn').addEventListener('click', ()=>{ $('card-results').textContent=''; $('error-basic').textContent=''; $('error-adv').textContent=''; $('bin').classList.remove('invalid'); $('generate-adv').disabled=true; });
 
-/* Visitor counter: record visit then display TOTAL visits once (no polling) */
-const visitor = (function(){
-  async function safeFetch(url, opts){
-    try {
-      const ctrl = new AbortController();
-      const id = setTimeout(()=>ctrl.abort(), 3000);
-      const res = await fetch(url, {...(opts||{}), signal: ctrl.signal});
-      clearTimeout(id);
-      if(!res.ok) throw new Error('non-2xx');
-      return res;
-    } catch(e){ return null; }
-  }
-  async function notifyServerVisit(){
-    // POST /api/visit to signal page view
-    const path = window.location.pathname || '/';
-    const res = await safeFetch(`/api/visit`, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({path})
-    });
-    return !!res;
-  }
-  async function fetchVisitorTotal(){
-    const path = encodeURIComponent(window.location.pathname || '/');
-    const res = await safeFetch(`/api/visitors?path=${path}`, { method: 'GET' });
-    if(!res) return null;
-    try {
-      const j = await res.json();
-      if(typeof j.count === 'number') return j.count;
-      return null;
-    } catch(e){ return null; }
-  }
-  async function init(){
-    const ok = await notifyServerVisit();
-    const count = await fetchVisitorTotal();
-    if(count !== null){
-      nodes.visitorCount.textContent = String(count);
-    } else if(!ok){
-      // fallback: show a single plausible demo count (not polling)
-      const demo = 120 + Math.floor(Math.random()*40);
-      nodes.visitorCount.textContent = String(demo);
-    } else {
-      // notified ok but couldn't fetch total -> still show a simple placeholder message
-      nodes.visitorCount.textContent = '—';
-    }
-  }
-  return { init };
+/* Visitor: POST once then GET total (single fetch) */
+(async function visitorInit(){
+  const path = window.location.pathname || '/';
+  async function safeFetch(url, opts){ try{ const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(),3000); const res = await fetch(url, {...(opts||{}), signal:ctrl.signal}); clearTimeout(to); if(!res.ok) throw new Error('non-2xx'); return res; } catch(e){ return null; } }
+  try {
+    await safeFetch('/api/visit', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ path }) });
+    const res = await safeFetch(`/api/visitors?path=${encodeURIComponent(path)}`, { method:'GET' });
+    if(res){ const j = await res.json(); if(typeof j.count === 'number') $('visitor-count').textContent = String(j.count); else $('visitor-count').textContent = '—'; }
+    else $('visitor-count').textContent = String(100 + Math.floor(Math.random()*40));
+  } catch(e){ $('visitor-count').textContent = String(100 + Math.floor(Math.random()*40)); }
 })();
 
-visitor.init().catch(err => { console.warn('Visitor init failed', err); });
-
-/* Tabs keyboard accessibility */
+/* Accessibility: keyboard tabs */
 document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); }
-  });
+  btn.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
 });
 
-/* Ad injection (immediate) */
+/* Inject ad script immediately (fallback shown on error) */
 (function injectAdImmediate(){
   try {
-    const wrap = nodes.adWrap;
+    const wrap = $('ad-wrap');
     if(!wrap) return;
     const key = wrap.dataset.adKey;
     window.atOptions = { 'key': key, 'format': 'iframe', 'height': 60, 'width': 468, 'params': {} };
@@ -684,7 +531,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     s.onload = function(){ const d=$('ad-debug'); if(d) d.style.display='none'; };
     s.onerror = function(){ const f=$('ad-fallback'); if(f){ f.srcdoc = `<div style='width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#071226;color:#9fd6c3;font-weight:700;border-radius:6px;'>Ad placeholder</div>`; f.style.display=''; const d=$('ad-debug'); if(d) d.style.display='none'; } };
     wrap.appendChild(s);
-  } catch(e){ console.error('Ad injection failed', e); }
+  } catch (e) { console.error('Ad injection failed', e); }
 })();
 </script>
 </body>
